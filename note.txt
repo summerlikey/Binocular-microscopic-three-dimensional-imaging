@@ -1,1 +1,10 @@
 listCameras.cpp //相机参数
+SynchronousGrab//同步抓取
+AsynchronousGrab//异步抓取
+VimbaViewer examples//实例
+
+Vimba Manual.pdf  必需
+Vimba CPP Manual.pdf  必需
+Vimba ImageTransform Manual.pdf 选择  
+Mako G-192B PoE Gige接口
+GenICam（相机通用接口）： 一种通用软件接口
