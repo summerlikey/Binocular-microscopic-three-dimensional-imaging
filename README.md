@@ -20,4 +20,4 @@ User:
 # SynchronousGrab 同步
 # asynchronousGrab 异步
 # Image Capture and Image AcquisiƟon  
- ![image](https://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/acquisition.png)   
+ ![image](https://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/acquistion.png)   
