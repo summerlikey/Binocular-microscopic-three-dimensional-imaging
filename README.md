@@ -3,6 +3,9 @@ My project
 ![image](http://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/Api.png)  
 GenICam  
 GigE TL camera mako G-192B PoE
+Vimba Manual.pdf  
+Vimba CPP Manual.pdf  
+Vimba ImageTransform Manual.pdf  
 # Buffer management
 User:  
 1.Allocate memory for the frame buffers on the host PC.  
