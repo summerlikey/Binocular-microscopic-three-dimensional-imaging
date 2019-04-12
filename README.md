@@ -19,3 +19,5 @@ User:
 7.Requeue the frame to hand it over to the API.  
 # SynchronousGrab 同步
 # asynchronousGrab 异步
+# Image Capture and Image AcquisiƟon  
+ ![image](https://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/acquisition.png)   
