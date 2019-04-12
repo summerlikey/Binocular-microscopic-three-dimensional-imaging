@@ -17,3 +17,5 @@ Vimba:
 User:  
 6.Work with the image.  
 7.Requeue the frame to hand it over to the API.  
+# SynchronousGrab 同步
+# asynchronousGrab 异步
