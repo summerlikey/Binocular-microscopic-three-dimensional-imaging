@@ -1,6 +1,6 @@
 # Binocular-microscopic-three-dimensional-imaging
 My project  
- ![image]https://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/api.png)  
+ ![image](https://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/api.png)  
 GenICam  
 GigE TL camera mako G-192B PoE
 Vimba Manual.pdf  
