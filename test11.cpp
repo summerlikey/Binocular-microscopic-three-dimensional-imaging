@@ -118,7 +118,66 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "system3 is shutdown" << endl;
 	}
 
+	//read camera feature
 
+	FeaturePtr feature4;
+	VmbInt64_t width;
+	VmbInt64_t height;
+	
+	CameraPtr camera4;
+	VimbaSystem &system4 = VimbaSystem::GetInstance();
+	system4.Startup();
+	system4.OpenCameraByID("169.254.127.127",VmbAccessModeFull,camera4);
+	if (VmbErrorSuccess == camera4->GetFeatureByName("Width", feature4))//通过名字访问 27-28页
+	{
+		if (VmbErrorSuccess == feature4->GetValue(width))
+		{
+			cout << width <<endl;
+		}
+	}	if (VmbErrorSuccess == camera4->GetFeatureByName("Height", feature4))
+	{
+		if (VmbErrorSuccess == feature4->GetValue(height))
+		{
+			cout << height << endl;
+		}
+	}	if (VmbErrorSuccess == camera4->Close())
+	{
+		std::cout << "Camera4 is closed by Close()" << std::endl;
+	}
+	if (VmbErrorSuccess == system4.Shutdown())
+	{
+		cout << "system4 is shutdown" << endl;
+	}
+
+	//writing features to camera and running a command feature
+
+	FeaturePtr feature5;
+	CameraPtr camera5;
+	VimbaSystem &system5 = VimbaSystem::GetInstance();
+	system5.Startup();
+	system5.OpenCameraByID("169.254.127.127", VmbAccessModeFull, camera5);
+	if (VmbErrorSuccess == camera5->GetFeatureByName("AcquisitionMode", feature5))
+	{
+		if (VmbErrorSuccess == feature5->SetValue("Continuous"))
+		{
+			if (VmbErrorSuccess == camera5->GetFeatureByName("AcquisitionStart",
+				feature5))
+			{
+				if (VmbErrorSuccess == feature5->RunCommand())
+				{
+					cout << "Acquisition started" << endl;
+				}
+			}
+		}
+	}
+	if (VmbErrorSuccess == camera5->Close())
+	{
+		std::cout << "Camera5 is closed by Close()" << std::endl;
+	}
+	if (VmbErrorSuccess == system4.Shutdown())
+	{
+		cout << "system5 is shutdown" << endl;
+	}
 
 	getchar();
 	return 0;
