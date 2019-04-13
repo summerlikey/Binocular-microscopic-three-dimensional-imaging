@@ -134,13 +134,16 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			cout << width <<endl;
 		}
-	}	if (VmbErrorSuccess == camera4->GetFeatureByName("Height", feature4))
+	}
+	if (VmbErrorSuccess == camera4->GetFeatureByName("Height", feature4))
 	{
 		if (VmbErrorSuccess == feature4->GetValue(height))
 		{
 			cout << height << endl;
 		}
-	}	if (VmbErrorSuccess == camera4->Close())
+	}
+
+	if (VmbErrorSuccess == camera4->Close())
 	{
 		std::cout << "Camera4 is closed by Close()" << std::endl;
 	}
@@ -178,7 +181,37 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		cout << "system5 is shutdown" << endl;
 	}
+	
+	//异步抓取图像
+	VmbInt64_t nPLS; // 有效负债大小值
+	FeaturePtr pFeature; // 通用功能指针
 
+	VimbaSystem &sys = VimbaSystem::GetInstance();//系统初始化
+	CameraPtrVector cameras;//相机向量数组
+	CameraPtr camera;//单个相机
+	sys.Startup();//打开API
+	sys.GetCameras(cameras);//获取所有相机
+	camera = cameras[0];//将相机一赋值给当个相机量
+	camera->Open(VmbAccessModeFull);//打开相机，按照读写模式
+	camera->GetFeatureByName("PayloadSize", pFeature);//有效字节数
+	pFeature->GetValue(nPLS);//有效负载大小值
+
+	for (CameraPtrVector::iterator iter = cameras.begin();
+		cameras.end() != iter;
+		++iter)
+	{
+		if (VmbErrorSuccess == (*iter)->Close())
+		{
+			std::cout << "Cameras closed by Close()" << std::endl;
+		}
+	}
+	if(VmbErrorSuccess==sys.Shutdown())
+	{
+		cout << "sys is shut down" << endl;
+	}
+
+	
 	getchar();
 	return 0;
 }
+
