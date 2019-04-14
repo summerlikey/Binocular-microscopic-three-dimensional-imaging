@@ -1,8 +1,12 @@
 ﻿#include "pch.h"
 #include <tchar.h>
-#include <iostream >
+#include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include "VimbaCPP/Include/VimbaCPP.h"
+#include "VmbCommonTypes.h"
+#include "VmbTransform.h"
+#include "VmbTransformTypes.h"
 #include "FrameObserver.h"
 using namespace std;
 using namespace AVT::VmbAPI;
@@ -23,6 +27,8 @@ void FrameObserver::FrameReceived(const FramePtr pFrame)
 	{
 		if (VmbFrameStatusComplete == eReceiveStatus)
 		{
+			VmbUchar_t *pBuffer;
+			cout << pFrame->GetImage(pBuffer);
 			//成功接受帧上做出反应，自己写
 		}
 		else
@@ -38,6 +44,12 @@ void FrameObserver::FrameReceived(const FramePtr pFrame)
 int _tmain(int argc, _TCHAR* argv[])
 {
 	std::cout << "Hello Vimba" << std::endl;
+	VmbUchar_t *pBuffer;
+	//pFrame->GetImage(pBuffer);
+	ofstream outFile;
+	outFile.open("a.txt");
+	outFile << "111";
+	outFile.close();
 	/*
 	VimbaSystem& system0 = VimbaSystem::GetInstance();
 	VmbVersionInfo_t version;
@@ -220,7 +232,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	VimbaSystem &sys = VimbaSystem::GetInstance();//系统初始化
 	CameraPtrVector cameras;//相机向量数组
 	CameraPtr camera;//单个相机
-	FramePtrVector frames(15);//帧向量数组
+	FramePtrVector frames(1);//帧向量数组
 	sys.Startup();//打开API
 	sys.GetCameras(cameras);//获取所有相机
 	camera = cameras[0];//将相机一赋值给当个相机量
@@ -232,22 +244,27 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		(*iter).reset(new Frame(nPLS));
 		(*iter)->RegisterObserver(IFrameObserverPtr(new  FrameObserver(camera)));
-		camera->AnnounceFrame(*iter);//撤销每一帧
+		camera->AnnounceFrame(*iter);//每一帧
 	}
 	// Start the capture engine (API)
 	//启动捕获引擎api
 	camera->StartCapture();
 	for (FramePtrVector::iterator iter = frames.begin(); frames.end() != iter; ++iter)
 	{
-		// Put frame into the frame queue
+
 		camera->QueueFrame(*iter);
 	}
 	// Start the acquisition engine (camera)
 	//启动采集引擎（相机）
 	camera->GetFeatureByName("AcquisitionStart", pFeature);
 
+	//the image
+	//获取图像,从帧中转出来
+
 	// Program runtime , e.g., Sleep(2000);休眠线程，给予获取时间，需要考虑可以到多快，配合投影仪和相机	// Stop the acquisition engine (camera);停止获取引擎	camera->GetFeatureByName("AcquisitionStop", pFeature);
 	pFeature->RunCommand();
+	
+	
 
 	// Stop the capture engine (API),停止捕获引擎api
 	// Flush the frame queue，刷新帧队列
@@ -260,7 +277,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		(*iter)->UnregisterObserver();
 	}
 	camera->Close();
-	sys.Shutdown();
 	/*
 	for (CameraPtrVector::iterator iter = cameras.begin();
 		cameras.end() != iter;
