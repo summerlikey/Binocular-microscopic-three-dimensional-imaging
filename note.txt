@@ -1,4 +1,4 @@
-listCameras.cpp //相机参数
+﻿listCameras.cpp //相机参数
 SynchronousGrab//同步抓取
 AsynchronousGrab//异步抓取
 VimbaViewer examples//实例
@@ -8,3 +8,35 @@ Vimba CPP Manual.pdf  必需
 Vimba ImageTransform Manual.pdf 选择  
 Mako G-192B PoE Gige接口
 共享指针
+
+Asynchronous image capture step by step
+1. Open the camera as described in chapter Opening and closing a camera.
+2. Query the necessary buffer size through the feature PayloadSize (A)¹. Allocate frames of this size.(B)
+3. Announce the frames (1).
+4. Start the capture engine (2).
+5. Queue the frame you have just created with Camera::QueueFrame, so that the buffer can be
+filled when the acquisition has started (3).
+The API is now ready. Start and stop image acquisition on the camera as described in
+chapter Image Acquisition.
+6. Register a frame observer (C) that gets executed when capturing is complete.
+The frame observer has to be of type IFrameObserver. Within the frame observer, queue the
+frame again after you have processed it.
+7. Stop the capture engine with Camera::EndCapture.
+8. Call Camera::FlushQueue to cancel all frames on the queue. If the API has done the memory
+allocation, this memory is not released until RevokeAllFrames, RevokeFrame, EndCapture, or
+Close functions have been called.
+9. Revoke the frames with Camera::RevokeAllFrames to clear the buffers.
+
+To synchronously capture images (blocking your execution thread), follow these steps:
+1. Open the camera as described in chapter Opening and closing a camera.
+2. How you proceed depends on the number of frames and the performance you need:
+• A single frame: You can use the convenience function Camera::AcquireSingleImage to
+receive one image frame. If your application requires a low CPU load or exact triggering, we
+recommend a different approach: Set the feature AcquisitionMode to SingleFrame and run
+the command AcquisitionStart (see chapter Image Acquisition).
+• Multiple frames: You can use the convenience function
+Camera::AcquireMultipleImages to receive several image frames (determined by the
+size of your vector of FramePtrs). If your application requires a low CPU load or exact
+triggering, we recommend a different approach: Set the feature AcquisitionMode to
+MultiFrame or Continuous and run the command AcquisitionStart (see chapter Image
+Acquisition).
