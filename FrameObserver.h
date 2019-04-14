@@ -5,16 +5,19 @@
 #include "VimbaCPP/Include/VimbaCPP.h"
 //对新帧的反应 类定义
 using namespace AVT::VmbAPI;
-class FrameObserver1 : public IFrameObserver
+class FrameObserver : public IFrameObserver
 {
 public:
-	FrameObserver1(CameraPtr pCamera) :IFrameObserver(pCamera)//构造函数
+	FrameObserver(CameraPtr pCamera);
+	/*:IFrameObserver(pCamera)//构造函数
+	
 	{
 		//初始化构造函数，自己写
 	}
-	void FrameReceived(const FramePtr pFrame)//成员函数
+	*/
+	void FrameReceived(const FramePtr pFrame);//成员函数
+	/*
 	{
-		/*
 		VmbFrameStatusType eReceiveStatus;
 		if (VmbErrorSuccess == pFrame->GetReceiveStatus(eReceiveStatus))
 		{
@@ -29,6 +32,7 @@ public:
 		}
 		//当完成帧处理后，重新排队
 		m_pCamera->QueueFrame(pFrame);
-		*/
 	}
+	*/
+    
 };

@@ -7,17 +7,30 @@
 using namespace std;
 using namespace AVT::VmbAPI;
 //初始化新帧处理类的构造函数
-FrameObserver1::FrameObserver1(CameraPtr pCamera) :IFrameObserver(pCamera)
+FrameObserver::FrameObserver(CameraPtr pCamera) :IFrameObserver(pCamera)
 {
-	cout << "111" << endl;
+	std::cout << "111" << std::endl;
 }
 //帧回调函数
-void FrameObserver1::FrameReceived(const FramePtr pFrame)
+void FrameObserver::FrameReceived(const FramePtr pFrame)
 {
 	//想工作线程发送通知
 	//不要在此回调函数中处理图像
 	//处理帧后，重新查询
-	cout << "222" << endl;
+	std::cout << "222" << std::endl;
+	VmbFrameStatusType eReceiveStatus;
+	if (VmbErrorSuccess == pFrame->GetReceiveStatus(eReceiveStatus))
+	{
+		if (VmbFrameStatusComplete == eReceiveStatus)
+		{
+			//成功接受帧上做出反应，自己写
+		}
+		else
+		{
+			//接受失败的反应
+		}
+	}
+	//当完成帧处理后，重新排队
 	m_pCamera->QueueFrame(pFrame);
 }
 
@@ -218,12 +231,36 @@ int _tmain(int argc, _TCHAR* argv[])
 	for (FramePtrVector::iterator iter = frames.begin(); frames.end() != iter; ++iter)
 	{
 		(*iter).reset(new Frame(nPLS));
-		(*iter)->RegisterObserver(IFrameObserverPtr(new  FrameObserver1(camera)));
-		camera->AnnounceFrame(*iter);
+		(*iter)->RegisterObserver(IFrameObserverPtr(new  FrameObserver(camera)));
+		camera->AnnounceFrame(*iter);//撤销每一帧
 	}
+	// Start the capture engine (API)
+	//启动捕获引擎api
+	camera->StartCapture();
+	for (FramePtrVector::iterator iter = frames.begin(); frames.end() != iter; ++iter)
+	{
+		// Put frame into the frame queue
+		camera->QueueFrame(*iter);
+	}
+	// Start the acquisition engine (camera)
+	//启动采集引擎（相机）
+	camera->GetFeatureByName("AcquisitionStart", pFeature);
 
+	// Program runtime , e.g., Sleep(2000);休眠线程，给予获取时间，需要考虑可以到多快，配合投影仪和相机	// Stop the acquisition engine (camera);停止获取引擎	camera->GetFeatureByName("AcquisitionStop", pFeature);
+	pFeature->RunCommand();
 
-
+	// Stop the capture engine (API),停止捕获引擎api
+	// Flush the frame queue，刷新帧队列
+	// Revoke all frames from the API，撤销API中的所有帧	camera->EndCapture();
+	camera->FlushQueue();	camera->RevokeAllFrames();
+	for (FramePtrVector::iterator iter = frames.begin(); frames.end() != iter; ++iter)
+	{
+		//// Unregister the frame observer/callback
+		//取消注册框架观察者/回调
+		(*iter)->UnregisterObserver();
+	}
+	camera->Close();
+	sys.Shutdown();
 	/*
 	for (CameraPtrVector::iterator iter = cameras.begin();
 		cameras.end() != iter;
