@@ -40,3 +40,13 @@ size of your vector of FramePtrs). If your application requires a low CPU load o
 triggering, we recommend a different approach: Set the feature AcquisitionMode to
 MultiFrame or Continuous and run the command AcquisitionStart (see chapter Image
 Acquisition).
+
+window qt creator .pro
+
+INCLUDEPATH += $$(VIMBA_HOME)
+INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\include"
+INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\include"
+
+LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\Lib\Win64\VimbaCPP.lib"
+LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaC\Lib\Win64\VimbaC.lib"
+LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\Lib\Win64\VimbaImageTransform.lib"
