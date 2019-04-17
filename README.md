@@ -27,12 +27,19 @@ User:
 # Image Capture and Image AcquisiƟon  
  ![image](https://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/acquistion.png)   
 # Qt .pro
+在.pro文件中设置    
+INCLUDEPATH += $$(VIMBA_HOME)
+INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\include"
+INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\include"
 
-INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\include"  
-INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\include"  
+LIBS += I:/qtcode/VimbaC/Lib/Win64/VimbaC.lib
+LIBS += I:/qtcode/VimbaCPP/Lib/Win64/VimbaCPP.lib
+LIBS += I:/qtcode/VimbaImageTransform/Lib/Win64/VimbaImageTransform.lib
+设置完成后，将下面4个文件放入debug 或者release中  
+VimbaC.dll  
+VimbaCPP.dll  
+VimbaCPPd.dll  
+VimbaImageTransform.dll  
 
-LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\Lib\Win64\VimbaCPP.lib"  
-LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaC\Lib\Win64\VimbaC.lib"  
-LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\Lib\Win64\VimbaImageTransform.lib"  
 # Qt 第三方库配置
 QT配置一直失败，无法链接
