@@ -21,3 +21,11 @@ User:
 # asynchronousGrab 异步
 # Image Capture and Image AcquisiƟon  
  ![image](https://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/acquistion.png)   
+# Qt .pro
+
+INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\include"  
+INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\include"  
+
+LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\Lib\Win64\VimbaCPP.lib"  
+LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaC\Lib\Win64\VimbaC.lib"  
+LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\Lib\Win64\VimbaImageTransform.lib"  
