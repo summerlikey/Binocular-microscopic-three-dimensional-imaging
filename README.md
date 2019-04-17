@@ -29,3 +29,5 @@ INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\inc
 LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\Lib\Win64\VimbaCPP.lib"  
 LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaC\Lib\Win64\VimbaC.lib"  
 LIBS += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\Lib\Win64\VimbaImageTransform.lib"  
+# Qt 第三方库配置
+QT配置一直失败，无法链接
