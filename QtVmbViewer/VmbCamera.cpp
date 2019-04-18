@@ -6,7 +6,7 @@ void VmbCamera::Startup(){
     // Initialize Vimba
     VmbStartup();
     //送发现包给相机
-    VmbFeatureCommandRun(gVimbaHandle,"GeVDiscoveryAllOnec");
+    VmbFeatureCommandRun(gVimbaHandle,"GeVDiscoveryAllOnce");
     //获取第一个相机
     VmbCameraInfo_t camera;
     VmbUint32_t count;
@@ -20,13 +20,13 @@ void VmbCamera::Startup(){
     VmbInt64_t height;
     VmbInt64_t payload_size;
     VmbFeatureIntGet(handle,"Width",&width);
-    VmbFeatureIntGet(handle,"Highet",&height);
+    VmbFeatureIntGet(handle,"Height",&height);
     VmbFeatureIntGet(handle,"PayloadSize",&payload_size);
     //创造qt 灰度图像
     image=QImage(width,height,QImage::Format_Indexed8);
     //为qt 创建索引颜色表
     image.setColorCount(256);
-    for(int i=0;i<255;i++)
+    for(int i=0;i<256;i++)
         image.setColor(i,qRgb(i,i,i));
     //初始化帧缓冲区
     frame_buffer =(VmbFrame_t*)malloc(frame_buffer_size * sizeof(VmbFrame_t));

@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include<QLabel>
 #include<QSlider>
-
+#include<QWidget>
 #include "VmbCamera.h"
 namespace Ui{
 class MainWindow;
@@ -28,6 +28,7 @@ private:
     QLabel* label;
     QSlider* slider;
     VmbCamera camera;
+    QWidget* widget;
 
 };
 

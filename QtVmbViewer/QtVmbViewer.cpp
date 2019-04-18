@@ -3,6 +3,7 @@
 #include "VmbCamera.h"
 #include <QPixmap>
 #include <QVBoxLayout>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
     //ui(new Ui::MainWindow)
@@ -22,10 +23,13 @@ MainWindow::MainWindow(QWidget *parent) :
     slider->update();
 
     //窗口布局
+    widget = new QWidget();
+    this->setCentralWidget(widget);
     QVBoxLayout* layout =new QVBoxLayout(this);
     layout->addWidget(label);
     layout->addWidget(slider);
     layout->setSizeConstraint(QLayout::SetFixedSize);
+    widget->setLayout(layout);
     //连接信号和新收到的图片
     connect(&camera,&VmbCamera::ImageReady,this,&MainWindow::UpdateImage);
     //连接槽和滑块和曝光值
