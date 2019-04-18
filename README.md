@@ -32,9 +32,9 @@ INCLUDEPATH += $$(VIMBA_HOME)
 INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\include"
 INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\include"
 
-LIBS += I:/qtcode/VimbaC/Lib/Win64/VimbaC.lib
-LIBS += I:/qtcode/VimbaCPP/Lib/Win64/VimbaCPP.lib
-LIBS += I:/qtcode/VimbaImageTransform/Lib/Win64/VimbaImageTransform.lib
+LIBS += I:/qtcode/VimbaC/Lib/Win64/VimbaC.lib  
+LIBS += I:/qtcode/VimbaCPP/Lib/Win64/VimbaCPP.lib  
+LIBS += I:/qtcode/VimbaImageTransform/Lib/Win64/VimbaImageTransform.lib  
 设置完成后，将下面4个文件放入debug 或者release中  
 VimbaC.dll  
 VimbaCPP.dll  
@@ -42,4 +42,4 @@ VimbaCPPd.dll
 VimbaImageTransform.dll  
 
 # Qt 第三方库配置
-QT配置一直失败，无法链接
+QT配置一直失败，无法链接，连接后需要run qmake一下  
