@@ -28,7 +28,7 @@ User:
  ![image](https://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/acquistion.png)   
 # Qt .pro
 在.pro文件中设置    
-INCLUDEPATH += $$(VIMBA_HOME)
+INCLUDEPATH += $$(VIMBA_HOME)  
 INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\include"
 INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\include"
 
