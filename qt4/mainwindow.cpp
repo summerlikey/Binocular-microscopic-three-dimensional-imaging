@@ -5,7 +5,17 @@
 #include"vmbimage.h"
 #include"frameobserver.h"
 #include<QLabel>
+
+#include <synchapi.h>
 using namespace std;
+
+void sleep(int msec)     //sleep(函数定义)
+{
+    QTime dieTime = QTime::currentTime().addMSecs(msec);
+    while( QTime::currentTime() < dieTime )
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -26,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     VmbAccessModeType ModeType;
     string IdOfInterface;
     FeaturePtr feature;//共享功能，可以用于访问相机功能和设置功能
-    FramePtrVector frames(2); // Frame array,帧个数
+    FramePtrVector frames(15); // Frame array,帧个数
     VmbInt64_t width;//宽度像素
     VmbInt64_t height;//高度像素
     VmbInt64_t nPLS; // Payload size value，帧大小？
@@ -116,8 +126,9 @@ MainWindow::MainWindow(QWidget *parent) :
                     feature ->RunCommand();//命令输入
                     cout<<"AcquisitionStart"<<endl;
                 }
+                Sleep(5000);
 
-
+                cout<<"the camera are working"<<endl;
 
 
 

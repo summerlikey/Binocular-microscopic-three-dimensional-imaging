@@ -20,7 +20,7 @@ private slots:
 private:
     //vmbimage imageY;
     Ui::MainWindow *ui;
-    //FrameObserver CameraF;
+
 };
 
 #endif // MAINWINDOW_H
