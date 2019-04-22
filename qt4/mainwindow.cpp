@@ -152,13 +152,14 @@ MainWindow::MainWindow(QWidget *parent) :
             {
                 cout<<"RevokeAllFrames"<<endl;
             }
-            /*
+
             for(FramePtrVector::iterator iter=frames.begin(); frames.end()!=iter; ++iter)//还为成功和前面的回调函数
             {
                 // Unregister the frame observer/callback
                 (*iter)->UnregisterObserver();//释放所有观察器或者回调函数
+                cout<<" UnregisterObserver "<<endl;
             }
-            */
+
             if(VmbErrorSuccess==camera ->Close())//关闭当前相机
             {
                 cout<<"camera is close"<<endl;
