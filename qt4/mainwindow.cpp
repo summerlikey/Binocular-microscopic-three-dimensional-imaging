@@ -100,7 +100,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 {
                     (*iter).reset(new Frame(nPLS));//每一帧给定大小nPLS
                     (*iter)->RegisterObserver(IFrameObserverPtr(new FrameObserver(camera)));//注册观察器，能够观察到相机功能的更改，暂时不考虑相机变化
-                    //(*iter)->RegisterObserver(IFrameObserverPtr(new vmbimage::FrameDoneCallback(camera,*iter)));//在写重要，每一帧绑定一个回调
+                    //(*iter)->RegisterObserver(new FrameDoneCallback(camera,*iter));//在写重要，每一帧绑定一个回调
                     camera ->AnnounceFrame(*iter);//相机定义帧
                 }
                 //开始引擎，将帧放入队列
@@ -116,6 +116,8 @@ MainWindow::MainWindow(QWidget *parent) :
                     feature ->RunCommand();//命令输入
                     cout<<"AcquisitionStart"<<endl;
                 }
+
+
 
 
 
