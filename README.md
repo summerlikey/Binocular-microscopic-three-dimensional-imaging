@@ -44,3 +44,17 @@ VimbaImageTransform.dll
 # Qt 第三方库配置
 QT配置一直失败，无法链接，连接后需要run qmake一下   
 当多继承含有QObjiect时，需要将QObjiect放在前面，例如class FrameObserver : public QObject,public IFrameObserver，如何反过来将会出现中间编译错误  
+# 处理流程
+1.相机打开  
+2.准备工作  
+A.定义帧大小  
+B.开始引擎   
+C.帧放入队列    
+3.开始采集  
+  采集过程  这过程中，可以利用类的初始化进行参数传递，重要的是哪一个相机的传递，构造函数能够实现传递，（重要）
+5.停止采集  
+6.停止采集引擎  
+7.释放队列  
+8.释放所有帧  
+9.释放所有观察器  
+10.观察当前相机  
