@@ -42,4 +42,5 @@ VimbaCPPd.dll
 VimbaImageTransform.dll  
 
 # Qt 第三方库配置
-QT配置一直失败，无法链接，连接后需要run qmake一下  
+QT配置一直失败，无法链接，连接后需要run qmake一下   
+当多继承含有QObjiect时，需要将QObjiect放在前面，例如class FrameObserver : public QObject,public IFrameObserver，如何反过来将会出现中间编译错误  
