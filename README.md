@@ -60,4 +60,5 @@ C.帧放入队列
 10.关闭当前相机  
 # 官方例子在vs2017中打开
 将qt 的version 调整到自己版本的，qt project option version  
-将qt连接库lib调整到qt五的版本
+将qt连接库lib调整到qt五的版本  
+附加库目录选择本机qt的bin目录，本机新建一个环境变量QTDIR 值就是Qt的目录，因为include 和bin 目录都继承了环境变量，下次配置三方库时观察是否使用变量，变量可以在环境变量中配置（全局变量）  
