@@ -58,3 +58,6 @@ C.帧放入队列
 8.释放所有帧  
 9.释放所有观察器  
 10.关闭当前相机  
+# 官方例子在vs2017中打开
+将qt 的version 调整到自己版本的，qt project option version  
+将qt连接库lib调整到qt五的版本
