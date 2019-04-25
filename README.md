@@ -70,15 +70,16 @@ C.帧放入队列
 2.QObject 是所有qt类的基类，只有QObject的类和派生类才能使用connect将信号和槽进行连接，connect(Object1,SINGAL(AAA),this,SLOTS(ADD)),第一个参数是信号的发出者，第二个参数是信号，第三个参数是信号的接收者，第四个是槽。平时使用的mainwindow，widget都是QObject的派生类，可以直接使用connect，
 3.问题：找不到信号发送者，connect仅仅适用于活动对象。  问题解决，首先发送者是一个OBject指针，因此，需要将m_pCameraObserver =new Camera();观察器然后注册观察器  
 .H中
-    // Our camera observer
+    // Our camera observer  
     CameraObserver *m_pCameraObserver;  
-.cpp中
-    m_pCameraObserver=new CameraObserver();
-    if(VmbErrorSuccess==m_system.RegisterCameraListObserver( ICameraListObserverPtr (m_pCameraObserver)))
-    {
-        cout<<"m_system.RegisterCameraListObserver"<<endl;
-
-        return m_pCameraObserver;
-    }
+    
+.cpp中  
+    m_pCameraObserver=new CameraObserver();  
+    if(VmbErrorSuccess==m_system.RegisterCameraListObserver( ICameraListObserverPtr (m_pCameraObserver)))  
+    {  
+        cout<<"m_system.RegisterCameraListObserver"<<endl;  
+        return m_pCameraObserver;  
+    }  
+    
 4.由观察器的实现原理产生问题3，观察器的使用，如何将状态更改通知其他类，但又不依赖于对象的类？需要复习，解决了观察器，暂时没有解决此问题
 
