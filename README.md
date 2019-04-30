@@ -90,3 +90,4 @@ C.帧放入队列
 8.共享指针
 9.SP_SET(m_pFrameObserver ,new FrameObserver(m_pCamera))注册帧观察器  
 10.强制转换类型static_cast < int > (width),强制转换未int类型，可以用于其他强制转换  
+11.qt采用事件驱动程序，需要不断的循环，return a.exec()，一直返回主函数，不让主函数结束。  
