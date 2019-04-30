@@ -90,4 +90,5 @@ C.帧放入队列
 8.共享指针
 9.SP_SET(m_pFrameObserver ,new FrameObserver(m_pCamera))注册帧观察器  
 10.强制转换类型static_cast < int > (width),强制转换未int类型，可以用于其他强制转换  
-11.qt采用事件驱动程序，需要不断的循环，return a.exec()，一直返回主函数，不让主函数结束。  
+11.qt采用事件驱动程序，需要不断的循环，return a.exec()，一直返回主函数，不让主函数结束。qt在编译中的实现过程，首先，qmake -project  生成 .pro文件
+其次再执行qmake 生成makefile文件，最后 make 根据makefile生成可执行文件，qt跨平台，就是使用qmake生成各个平台的makefile，因为每个平台的makefile不同，因此跨平台在编译过程中就开始实现了 。
