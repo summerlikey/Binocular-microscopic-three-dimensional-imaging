@@ -89,4 +89,4 @@ C.帧放入队列
 7.该QMutex类提供线程之间的访问串行化,QMutex的目的是保护对象，数据结构或代码段，以便一次只能有一个线程访问它.有lock和unlock成员函数  
 8.共享指针
 9.SP_SET(m_pFrameObserver ,new FrameObserver(m_pCamera))注册帧观察器  
-10.强制转换类型static_cast <int> (width),强制转换未int类型，可以用于其他强制转换  
+10.强制转换类型static_cast < int > (width),强制转换未int类型，可以用于其他强制转换  
