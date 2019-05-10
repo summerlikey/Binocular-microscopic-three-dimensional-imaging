@@ -204,6 +204,7 @@ void MainWindow::RightCamera_StartStop()
     else {
         //停止线程
 //        LeftCameraThread.stopImmediately();//停止线程
+        StopRightCamera();
         RightCameraThread->quit();
         if(RightCameraThread->isRunning()==true)
         {
@@ -242,9 +243,9 @@ void MainWindow::RunLeftCamera()
 }
 void MainWindow::RunRightCamera()
 {
-    LeftCameraThread->SystemStartup();
+    RightCameraThread->SystemStartup();
     RightCameraThread->SetNowCameraId(GetRightCameraId());//获得右边相机
-    LeftCameraThread->GetNowCameraId();//获得左边相机
+
     //RightCameraThread.GetCameraStatus();
     RightCameraThread->start();//开始run
     Log("runrightcamera");
@@ -321,7 +322,6 @@ void MainWindow::LeftCameraQimage(int sta)
 }
 void MainWindow::RightCameraQimage(int sta )
 {
-    Log("Qimage is show");
     const QSize s = ui->rightcamera_label->size();
     ui->rightcamera_label->setStyleSheet("border:2px solid red;");
     ui->rightcamera_label->setPixmap(QPixmap::fromImage(RightCameraThread->NowImage).scaled(s,Qt::KeepAspectRatio));//自适应QLabel的大小
