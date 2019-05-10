@@ -1,4 +1,4 @@
-#include "FrameObserver.h"
+#include "frameobserver.h"
 #include<QDebug>
 void FrameObserver::FrameReceived(const FramePtr pFrame)
 {
@@ -10,7 +10,7 @@ void FrameObserver::FrameReceived(const FramePtr pFrame)
        m_FramesMutex.lock();//lock
        m_Frames.push(pFrame);
        m_FramesMutex.unlock();//unlock
-
+       //qDebug()<<"frame data ";
        emit FrameReceivedSignal( eReceiveStatus );//emit singal
        bQueueDirectly = false;
    }

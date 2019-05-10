@@ -20,11 +20,13 @@ public:
     ~MainWindow();
     void RunLeftCamera();//左线程运行
     void RunRightCamera();//右线程运行
+    void StopLeftCamera();//关闭左相机
+    void StopRightCamera();//关闭右相机
 private:
     Ui::MainWindow *ui;
     Api m_api;
-    CameraThread LeftCameraThread;//左相机线程
-    CameraThread RightCameraThread;//右相机线程
+    CameraThread *LeftCameraThread;//左相机线程
+    CameraThread *RightCameraThread;//右相机线程
     CameraThread *Test;
     bool LeftisRun;//左相机在工作？
     bool RightisRun;//右相机在工作？

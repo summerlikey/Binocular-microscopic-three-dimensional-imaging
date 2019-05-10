@@ -7,6 +7,7 @@ using namespace AVT::VmbAPI;
 enum    { NUM_FRAMES=3, };//帧队列的个数
 CameraThread::CameraThread()
 {
+
     creatnumber++;
     qDebug()<<"cameraThread "<<creatnumber<<QThread::currentThreadId();
     //QObject :: connect(&timer,SIGNAL(timeout()),this,SLOT(slot1()));
@@ -42,6 +43,10 @@ VmbErrorType CameraThread::QueueFrame( FramePtr pFrame )
     err = ThreadCamera->QueueFrame(pFrame);
     return err;
 }
+void CameraThread :: ClearFrameQueue()
+{
+    SP_DYN_CAST( m_pFrameObserver,FrameObserver )->ClearFrameQueue();
+}
 FramePtr CameraThread::GetFrame()
 {
     return SP_DYN_CAST( m_pFrameObserver, FrameObserver )->GetFrame();
@@ -58,21 +63,32 @@ VmbPixelFormatType CameraThread :: GetPixelFormat() const
 {
     return static_cast<VmbPixelFormatType>(m_nPixelFormat);
 }
+
+void CameraThread::setNowCameraId(VimbaSystem &system,QString CameraId)
+{
+    char *pId;
+    QByteArray ba=CameraId.toLatin1();
+    pId=ba.data();
+    NowCameraId = pId;
+}
+
+
+
 void CameraThread::GetNowCamera(VimbaSystem &system,QString CameraId)
 {
     VmbErrorType err;
     char *pId;
     //FramePtrVector frames( 3 );
-    VmbInt64_t nPLS; // Payload size value
-
-    FeaturePtr pFeature; // Generic feature pointer
 
     QByteArray ba=CameraId.toLatin1();
     pId=ba.data();
+
+
+    VmbInt64_t nPLS; // Payload size value
+    FeaturePtr pFeature; // Generic feature pointer
     if(VmbErrorSuccess == system.OpenCameraByID(pId,VmbAccessModeFull,ThreadCamera))//LeftCamera是引用值
     {
         qDebug()<<"left camera open success";
-
         //设置数据包
         FeaturePtr pCommandFeature;//命令
         if(VmbErrorSuccess==ThreadCamera->GetFeatureByName("GVSPAdjustPacketSize",pCommandFeature))//设置最大数据包，当连接两台相机后，选择是否改变
@@ -106,6 +122,20 @@ void CameraThread::GetNowCamera(VimbaSystem &system,QString CameraId)
     }
 }
 
+void CameraThread::StopNowCamera()
+{
+    FeaturePtr pFeature; // Generic feature pointer
+    VmbErrorType err;
+    err = ThreadCamera->GetFeatureByName( "AcquisitionStop", pFeature );
+    pFeature ->RunCommand();
+    ThreadCamera -> EndCapture();
+    ClearFrameQueue();
+    ThreadCamera -> RevokeAllFrames();
+
+    ThreadCamera->Close();
+
+}
+
 int CameraThread::creatnumber=0;//两种方法初始化静态数据成员int类型
 
 void CameraThread::stopImmediately()
@@ -116,6 +146,9 @@ void CameraThread::stopImmediately()
 
 void CameraThread::run()
 {
+
+
+
     qDebug()<<"cameraThread  run() 111222"<<creatnumber<<"run"<<currentThreadId();
     if(GetCameraStatus()==true)
     {
@@ -196,7 +229,7 @@ VmbErrorType CameraThread :: CopyToImage(VmbUchar_t *pInBuffer, VmbPixelFormat_t
         break;
     }
     //在字符串中设置VmbImage中的图像信息成员值。
-    Result = VmbSetImageInfoFromString(OutputFormat.toStdString().c_str(),OutputFormat.length(),nWidth,nHeight, &DestImage);
+    Result = VmbSetImageInfoFromString(OutputFormat.toStdString().c_str(),OutputFormat.length() , nWidth , nHeight , &DestImage);
     if(VmbErrorSuccess != Result)//DeseImage格式没有设置对
     {
         qDebug() << "could not set output image info",static_cast<VmbErrorType>(Result);

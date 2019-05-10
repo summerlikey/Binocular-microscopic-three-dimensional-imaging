@@ -18,17 +18,17 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>380</y>
+      <y>451</y>
       <width>256</width>
-      <height>192</height>
+      <height>121</height>
      </rect>
     </property>
    </widget>
    <widget class="QListWidget" name="log_lv">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>370</y>
+      <x>530</x>
+      <y>380</y>
       <width>256</width>
       <height>201</height>
      </rect>
@@ -37,10 +37,10 @@
    <widget class="QLabel" name="leftcamera_label">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>100</y>
-      <width>181</width>
-      <height>171</height>
+      <x>30</x>
+      <y>30</y>
+      <width>301</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="font">
@@ -55,10 +55,10 @@
    <widget class="QLabel" name="rightcamera_label">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>90</y>
-      <width>171</width>
-      <height>161</height>
+      <x>470</x>
+      <y>30</y>
+      <width>311</width>
+      <height>221</height>
      </rect>
     </property>
     <property name="font">
@@ -73,8 +73,8 @@
    <widget class="QLabel" name="LeftCameraLight_label">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>290</y>
+      <x>150</x>
+      <y>340</y>
       <width>15</width>
       <height>15</height>
      </rect>
@@ -98,8 +98,8 @@
    <widget class="QLabel" name="RightCameraLight_label">
     <property name="geometry">
      <rect>
-      <x>500</x>
-      <y>280</y>
+      <x>640</x>
+      <y>320</y>
       <width>15</width>
       <height>15</height>
      </rect>
@@ -123,8 +123,8 @@
    <widget class="QPushButton" name="leftcamera_btn">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>320</y>
+      <x>120</x>
+      <y>370</y>
       <width>81</width>
       <height>23</height>
      </rect>
@@ -136,8 +136,8 @@
    <widget class="QPushButton" name="rightcamera_btn">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>320</y>
+      <x>590</x>
+      <y>340</y>
       <width>101</width>
       <height>23</height>
      </rect>

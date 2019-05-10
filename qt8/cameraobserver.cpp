@@ -1,4 +1,4 @@
-#include "CameraObserver.h"
+#include "cameraobserver.h"
 
 void CameraObserver::CameraListChanged( CameraPtr pCam, UpdateTriggerType reason )
 {

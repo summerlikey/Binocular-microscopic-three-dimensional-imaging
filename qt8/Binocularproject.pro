@@ -36,8 +36,7 @@ SOURCES += \
     api.cpp \
     cameraobserver.cpp \
     camerathread.cpp \
-    frameobserver.cpp \
-    leftcameraobserver.cpp
+    frameobserver.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -45,8 +44,7 @@ HEADERS += \
     cameraobserver.h \
     camerathread.h \
     frameobserver.h \
-    errorcodetomessage.h \
-    leftcameraobserver.h
+    errorcodetomessage.h
 
 FORMS += \
         mainwindow.ui

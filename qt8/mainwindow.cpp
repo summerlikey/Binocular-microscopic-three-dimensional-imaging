@@ -17,8 +17,12 @@ MainWindow::MainWindow(QWidget *parent) :
 //    LeftCameraThread.start();
 //    RightCameraThread.start();
     //RightCameraThread.start();
-    Test = new CameraThread();
-    QObject::connect(Test,SIGNAL(QimageIsReady(int)),this ,SLOT( LeftCameraQimage(int) ) );//测试图片链接，无相机链接系统会崩，注意进行错误返回，防止系统，因为掉帧，掉相机崩溃，原因容易访问不存在指针。
+    //Test = new CameraThread();
+    LeftCameraThread = new CameraThread();
+    RightCameraThread = new CameraThread();
+    //QObject::connect(Test,SIGNAL(QimageIsReady(int)),this ,SLOT( LeftCameraQimage(int) ) );//测试图片链接，无相机链接系统会崩，注意进行错误返回，防止系统，因为掉帧，掉相机崩溃，原因容易访问不存在指针。
+    QObject::connect(LeftCameraThread,SIGNAL(QimageIsReady(int)),this ,SLOT( LeftCameraQimage(int) ) );//测试图片链接，无相机链接系统会崩，注意进行错误返回，防止系统，因为掉帧，掉相机崩溃，原因容易访问不存在指针。
+    QObject::connect(RightCameraThread,SIGNAL(QimageIsReady(int)),this ,SLOT( RightCameraQimage(int) ) );//测试图片链接，无相机链接系统会崩，注意进行错误返回，防止系统，因为掉帧，掉相机崩溃，原因容易访问不存在指针。
     QObject::connect(this->ui->leftcamera_btn,SIGNAL(clicked()),this,SLOT(LeftCamera_StartStop()));
     QObject::connect(this->ui->rightcamera_btn,SIGNAL(clicked()),this,SLOT(RightCamera_StartStop()));
 
@@ -30,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    LeftCameraThread.quit();
-    RightCameraThread.quit();
+    LeftCameraThread->quit();
+    RightCameraThread->quit();
 
     m_api.ApiShutDown();
 }
@@ -133,7 +137,7 @@ void MainWindow::LeftCamera_StartStop()
     if(false==LeftisRun)
     {
         LeftisRun=true;
-        LeftCameraThread.SetCameraStatus(LeftisRun);
+        LeftCameraThread->SetCameraStatus(LeftisRun);
         //Lm_Image = QImage( LeftCameraThread.GetWidth(),LeftCameraThread.GetHeight(),QImage::Format_RGB888);
         RunLeftCamera();//左边相机过的运行
         Log("left camera is run");
@@ -143,15 +147,16 @@ void MainWindow::LeftCamera_StartStop()
     else {
         //停止线程
 //        LeftCameraThread.stopImmediately();//停止线程
-        LeftCameraThread.quit();
-        if(LeftCameraThread.isRunning()==true)
+        StopLeftCamera();
+        LeftCameraThread->quit();
+        if(LeftCameraThread->isRunning()==true)
         {
             Log("is runing,not quit success");
         }
         else {
             Log("is quit,quit success");
         }
-        LeftCameraThread.SetCameraStatus(false);
+        LeftCameraThread->SetCameraStatus(false);
         LeftisRun=false;
     }
 
@@ -170,15 +175,15 @@ void MainWindow::RightCamera_StartStop()
     if(false==RightisRun)
     {
         RightisRun=true;
-        RightCameraThread.SetCameraStatus(RightisRun);
+        RightCameraThread->SetCameraStatus(RightisRun);
         RunRightCamera();//左边相机过的运行
         Log("right camera is run");
     }
     else {
         //停止线程
 //        LeftCameraThread.stopImmediately();//停止线程
-        RightCameraThread.quit();
-        if(RightCameraThread.isRunning()==true)
+        RightCameraThread->quit();
+        if(RightCameraThread->isRunning()==true)
         {
             Log(" Right is runing,not quit success");
         }
@@ -186,7 +191,7 @@ void MainWindow::RightCamera_StartStop()
             Log("Right is quit,quit success");
         }
         RightisRun=false;
-        RightCameraThread.SetCameraStatus(false);
+        RightCameraThread->SetCameraStatus(false);
     }
 
     if(RightisRun==true)
@@ -201,30 +206,36 @@ void MainWindow::RightCamera_StartStop()
 
 void MainWindow::RunLeftCamera()
 {
-    LeftCameraThread.GetNowCamera(m_api.getSystem(),GetLeftCameraId());//获得左边相机
+    LeftCameraThread->GetNowCamera(m_api.getSystem(),GetLeftCameraId());//获得左边相机
     //LeftCameraThread.GetCameraStatus();
-    LeftCameraThread.start();//开始run
-    const QSize s = ui->leftcamera_label->size();
-    ui->leftcamera_label->setStyleSheet("border:2px solid red;");
-    ui->leftcamera_label->setPixmap(QPixmap::fromImage(LeftCameraThread.NowImage).scaled(s,Qt::KeepAspectRatio));//自适应QLabel的大小
+    LeftCameraThread->start();//开始run
     Log("runleftcamera");
 }
 void MainWindow::RunRightCamera()
 {
-    RightCameraThread.GetNowCamera(m_api.getSystem(),GetRightCameraId());//获得右边相机
+    RightCameraThread->GetNowCamera(m_api.getSystem(),GetRightCameraId());//获得右边相机
     //RightCameraThread.GetCameraStatus();
-    RightCameraThread.start();//开始run
-
+    RightCameraThread->start();//开始run
     Log("runrightcamera");
 }
 
+void MainWindow::StopLeftCamera()
+{
+    //左边相机Id  , DEV_000F315BA9A2
+    LeftCameraThread->StopNowCamera();
+}
+void MainWindow::StopRightCamera()
+{
+    //右边相机Id  , DEV_000F315BA9A3
+    RightCameraThread->StopNowCamera();
+}
 
 void MainWindow::LeftCameraFrameReady(int status)
 {
     if(true==LeftisRun)
     {
         FramePtr s_frame;
-        s_frame=LeftCameraThread.GetFrame();
+        s_frame=LeftCameraThread->GetFrame();
         if(SP_ISNULL(s_frame))//没有获取到帧
         {
             Log("Left frame pointer is NULL, late frame ready message");
@@ -238,10 +249,10 @@ void MainWindow::LeftCameraFrameReady(int status)
             {
                 VmbUint32_t nSize;
                 s_frame->GetImageSize(nSize);
-                VmbPixelFormatType ePixelFormat = LeftCameraThread.GetPixelFormat();//获取相机目前图像格式
+                VmbPixelFormatType ePixelFormat = LeftCameraThread->GetPixelFormat();//获取相机目前图像格式
             }
         }
-        LeftCameraThread.QueueFrame(s_frame);
+        LeftCameraThread->QueueFrame(s_frame);
     }
 }
 void MainWindow::RightCameraFrameReady(int status)
@@ -249,7 +260,7 @@ void MainWindow::RightCameraFrameReady(int status)
     if(true==RightisRun)
     {
         FramePtr s_frame;
-        s_frame=RightCameraThread.GetFrame();
+        s_frame=RightCameraThread->GetFrame();
         if(SP_ISNULL(s_frame))//没有获取到帧
         {
             Log("Right frame pointer is NULL, late frame ready message");
@@ -263,23 +274,24 @@ void MainWindow::RightCameraFrameReady(int status)
             {
                 VmbUint32_t nSize;
                 s_frame->GetImageSize(nSize);
-                VmbPixelFormatType ePixelFormat = RightCameraThread.GetPixelFormat();//获取相机目前图像格式
+                VmbPixelFormatType ePixelFormat = RightCameraThread->GetPixelFormat();//获取相机目前图像格式
             }
         }
-        RightCameraThread.QueueFrame(s_frame);
+        RightCameraThread->QueueFrame(s_frame);
     }
 }
 void MainWindow::LeftCameraQimage(int sta)
 {
-    const QSize s = ui->rightcamera_label->size();
-    ui->rightcamera_label->setStyleSheet("border:2px solid red;");
-    ui->rightcamera_label->setPixmap(QPixmap::fromImage(RightCameraThread.NowImage).scaled(s,Qt::KeepAspectRatio));//自适应QLabel的大小
+    const QSize s = ui->leftcamera_label->size();
+    ui->leftcamera_label->setStyleSheet("border:2px solid red;");
+    ui->leftcamera_label->setPixmap(QPixmap::fromImage(LeftCameraThread->NowImage).scaled(s,Qt::KeepAspectRatio));//自适应QLabel的大小
 }
 void MainWindow::RightCameraQimage(int sta )
 {
+    Log("Qimage is show");
     const QSize s = ui->rightcamera_label->size();
     ui->rightcamera_label->setStyleSheet("border:2px solid red;");
-    ui->rightcamera_label->setPixmap(QPixmap::fromImage(RightCameraThread.NowImage).scaled(s,Qt::KeepAspectRatio));//自适应QLabel的大小
+    ui->rightcamera_label->setPixmap(QPixmap::fromImage(RightCameraThread->NowImage).scaled(s,Qt::KeepAspectRatio));//自适应QLabel的大小
 }
 
 //日志输出和错误输出，进行排查
