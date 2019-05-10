@@ -9,24 +9,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     VmbErrorType err=m_api.ApiStartUp();//Api启动
     Log("Vimbaopen",err);//api启动成功
+
     //传入左边相机id和右边相机id,如果需要换相机直接这换相机Id
     QString str="DEV_000F315BA9A2";
     SetLeftCameraId(str);
     str="DEV_000F315BA9A3";
     SetRightCameraId(str);
-    qDebug()<<str;
 
     this->ui->LeftCameraLight_label->setPixmap(QPixmap(":/image/red").scaled(15,15));//左边相机状态灯
     this->ui->RightCameraLight_label->setPixmap(QPixmap(":/image/red").scaled(15,15));//右边相机状态灯
     //this->ui->Projector_Status->setPixmap(QPixmap(":/image/red").scaled(15,15));//投影仪状态灯
     QObject::connect(m_api.GetCameraObserver(),SIGNAL(CameraListChangedSignal(int)),this,SLOT( OnCameraListChanged(int)));//相机发现
     UpdateCameraListBox();//初始化相机盒子,同时返回到m_camera;
-//    LeftCameraThread.start();
-//    RightCameraThread.start();
-    //RightCameraThread.start();
-    //Test = new CameraThread();
+
+
     LeftCameraThread = new CameraThread();
     RightCameraThread = new CameraThread();
+
     //QObject::connect(Test,SIGNAL(QimageIsReady(int)),this ,SLOT( LeftCameraQimage(int) ) );//测试图片链接，无相机链接系统会崩，注意进行错误返回，防止系统，因为掉帧，掉相机崩溃，原因容易访问不存在指针。
     QObject::connect(LeftCameraThread,SIGNAL(QimageIsReady(int)),this ,SLOT( LeftCameraQimage(int) ) );//测试图片链接，无相机链接系统会崩，注意进行错误返回，防止系统，因为掉帧，掉相机崩溃，原因容易访问不存在指针。
     QObject::connect(RightCameraThread,SIGNAL(QimageIsReady(int)),this ,SLOT( RightCameraQimage(int) ) );//测试图片链接，无相机链接系统会崩，注意进行错误返回，防止系统，因为掉帧，掉相机崩溃，原因容易访问不存在指针。
@@ -34,8 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this->ui->rightcamera_btn,SIGNAL(clicked()),this,SLOT(RightCamera_StartStop()));
 
 
-    //QObject::connect(LeftCameraThread,SIGNAL(QimageIsReady(int), this, SLOT(LeftCameraQimage(int)));
-//    QObject::connect(LeftCameraThread.GetFrameObserver(), SIGNAL(FrameReceivedSignal(int)),this,SLOT(LeftOnFrameReady(int)));
 }
 
 MainWindow::~MainWindow()
@@ -159,7 +156,7 @@ void MainWindow::LeftCamera_StartStop()
     if(false==LeftisRun)
     {
         LeftisRun=true;
-        LeftCameraThread->SetCameraStatus(LeftisRun);
+        LeftCameraThread->SetCameraStatusIsRun(LeftisRun);
         //Lm_Image = QImage( LeftCameraThread.GetWidth(),LeftCameraThread.GetHeight(),QImage::Format_RGB888);
         RunLeftCamera();//左边相机过的运行
         Log("left camera is run");
@@ -178,7 +175,7 @@ void MainWindow::LeftCamera_StartStop()
         else {
             Log("is quit,quit success");
         }
-        LeftCameraThread->SetCameraStatus(false);
+        LeftCameraThread->SetCameraStatusIsRun(false);
         LeftisRun=false;
     }
 
@@ -197,7 +194,7 @@ void MainWindow::RightCamera_StartStop()
     if(false==RightisRun)
     {
         RightisRun=true;
-        RightCameraThread->SetCameraStatus(RightisRun);
+        RightCameraThread->SetCameraStatusIsRun(RightisRun);
         RunRightCamera();//左边相机过的运行
         Log("right camera is run");
     }
@@ -214,7 +211,7 @@ void MainWindow::RightCamera_StartStop()
             Log("Right is quit,quit success");
         }
         RightisRun=false;
-        RightCameraThread->SetCameraStatus(false);
+        RightCameraThread->SetCameraStatusIsRun(false);
     }
 
     if(RightisRun==true)

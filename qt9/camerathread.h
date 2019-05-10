@@ -20,8 +20,8 @@ public:
     VimbaSystem& GetNowSystem();//获取NowSystem
     void SystemStartup();//打开api
     void SystemShutDown();//关闭CDK
-    bool GetCameraStatus();//获取状态
-    void SetCameraStatus(bool sta);//设置状态
+    bool GetCameraStatusIsRun();//获取状态
+    void SetCameraStatusIsRun(bool sta);//设置状态
     void SetNowCameraId(QString CameraId);
     QString GetNowCameraId();
     int GetHeight()const;//获取私有数据成员m_nHeight
@@ -45,7 +45,7 @@ private:
     QTimer timer;
     VimbaSystem &NowSystem;//注册线程系统，试试线程能不能创建两个系统.需要初始化     不成功删掉，
     QString NowCameraId;//用于打开相机，通过  setNowCameraId(VimbaSystem &system,QString CameraId)设置
-    bool CameraisRun;//相机采集状态
+    bool CameraStatusIsRun;//相机采集状态
     IFrameObserverPtr m_pFrameObserver;//帧观察器
     //IFrameObserverPtr *MyFrameObserver;//帧观察器
     CameraPtr ThreadCamera;//相机,由GetNowCamera获得,打开方式中有引用

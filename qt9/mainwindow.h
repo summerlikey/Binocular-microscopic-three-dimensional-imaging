@@ -7,6 +7,7 @@
 #include"errorcodetomessage.h"
 #include<QString>
 #include"camerathread.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -34,7 +35,10 @@ private:
     Api m_api;
     CameraThread *LeftCameraThread;//左相机线程
     CameraThread *RightCameraThread;//右相机线程
-    CameraThread *Test;
+
+    //TestLeftCameraThread *test;
+
+
     bool LeftisRun;//左相机在工作？
     bool RightisRun;//右相机在工作？
     QImage Lm_Image;// 左边 qimage,最终采用qlabel显示

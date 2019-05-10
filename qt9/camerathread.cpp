@@ -21,7 +21,7 @@ void CameraThread::SystemStartup()
     res = NowSystem.Startup();
     if(VmbErrorSuccess==res)
     {
-        qDebug()<<"System is Start "<<endl;
+        qDebug()<<"Thread System is Start "<<endl;
     }
 }
 
@@ -32,7 +32,7 @@ void CameraThread::SystemShutDown()
     res = NowSystem.Shutdown();
     if(VmbErrorSuccess==res)
     {
-        qDebug()<<"System is shutdown "<<endl;
+        qDebug()<<"Thread System is shutdown "<<endl;
     }
 }
 
@@ -99,7 +99,6 @@ void CameraThread::SetNowCameraId(QString CameraId)
 }
 QString CameraThread::GetNowCameraId()
 {
-
     return NowCameraId;
 }
 
@@ -180,18 +179,17 @@ void CameraThread::stopImmediately()
 
 void CameraThread::run()
 {
+    qDebug()<<"cameraThread "<<QThread::currentThreadId();
+
+
     VmbErrorType err;
 
-
-
     qDebug()<<"cameraThread  run() 111222"<<creatnumber<<"run"<<currentThreadId();
-    if(GetCameraStatus()==true)
+    if(GetCameraStatusIsRun()==true)
     {
 
         VmbInt64_t nPLS; // Payload size value
         FeaturePtr pFeature; // Generic feature pointer
-        qDebug()<<"now is not the failure";
-
 
             char *pId;
             QByteArray ba=NowCameraId.toLatin1();
@@ -199,12 +197,12 @@ void CameraThread::run()
 
         qDebug()<<*pId;
         //估计原因不能打开相机线程里面明天继续看这原因
-        //err=GetNowSystem(). OpenCameraByID(pId,VmbAccessModeFull,ThreadCamera);
+        err=GetNowSystem(). OpenCameraByID(pId,VmbAccessModeFull,ThreadCamera);
 
-        if(VmbErrorSuccess == GetNowSystem() . OpenCameraByID( pId ,VmbAccessModeFull,ThreadCamera))//LeftCamera是引用值
+        if(VmbErrorSuccess == err)//LeftCamera是引用值
         {
 
-            qDebug()<<"left camera open success";
+            qDebug()<<"camera open success";
             //设置数据包
             FeaturePtr pCommandFeature;//命令
             if(VmbErrorSuccess==ThreadCamera->GetFeatureByName("GVSPAdjustPacketSize",pCommandFeature))//设置最大数据包，当连接两台相机后，选择是否改变
@@ -226,10 +224,6 @@ void CameraThread::run()
                  pFeature ->GetValue(nPLS);//大小
                  setFrameSize(nPLS);
              }
-
-            qDebug()<<"now is not the failure";
-
-            //fenge
 
             FramePtrVector frames( 3 );
 
@@ -259,9 +253,12 @@ void CameraThread::run()
 
             QObject::connect(GetFrameObserver(), SIGNAL(FrameReceivedSignal(int)),this,SLOT(NowOnFrameReady(int)),Qt::DirectConnection);
         }
+        else {
+            return;
+        }
 
     qDebug()<<"can quit";
-    exec();//exec会让线程卡在这句话上，不会往下执行（除非调用exit或quit
+    //exec();//exec会让线程卡在这句话上，不会往下执行（除非调用exit或quit
     }
 }
 VmbInt64_t CameraThread::setFrameSize(VmbInt64_t nPLS)
@@ -269,13 +266,13 @@ VmbInt64_t CameraThread::setFrameSize(VmbInt64_t nPLS)
     frameSize=nPLS;
     return  frameSize;
 }
-bool CameraThread::GetCameraStatus()
+bool CameraThread::GetCameraStatusIsRun()
 {
-    return CameraisRun;
+    return CameraStatusIsRun;
 }
-void CameraThread::SetCameraStatus(bool sta)
+void CameraThread::SetCameraStatusIsRun(bool sta)
 {
-    CameraisRun=sta;
+    CameraStatusIsRun=sta;
 }
 VmbErrorType CameraThread :: CopyToImage(VmbUchar_t *pInBuffer, VmbPixelFormat_t ePixelFormat, QImage &pOutImage, const float *Matrix)//pOutImage采用引用，用于图像转换
 {
@@ -302,7 +299,7 @@ VmbErrorType CameraThread :: CopyToImage(VmbUchar_t *pInBuffer, VmbPixelFormat_t
     case QImage::Format_RGB888:
         if(nWidth*3!=bytes_per_line)
         {
-            qDebug() << "image transform does not support stride",VmbErrorWrongType ;
+            qDebug() << "image transform does not support stride";
             return VmbErrorWrongType;
         }
         OutputFormat = "RGB24";
@@ -327,7 +324,7 @@ VmbErrorType CameraThread :: CopyToImage(VmbUchar_t *pInBuffer, VmbPixelFormat_t
         }
         else
         {
-            qDebug() <<  "could not set matrix t o transform info ", static_cast<VmbErrorType>( Result ) ;
+            qDebug() <<  "could not set matrix t o transform info " ;
             return static_cast<VmbErrorType>( Result );
         }
     }
@@ -338,17 +335,14 @@ VmbErrorType CameraThread :: CopyToImage(VmbUchar_t *pInBuffer, VmbPixelFormat_t
     if( VmbErrorSuccess != Result )
     {
         //转换未成功
-        qDebug() << "could not transform image", static_cast<VmbErrorType>(Result);
+        qDebug() << "could not transform image";
         return static_cast<VmbErrorType>( Result );
     }
-
-
     return static_cast<VmbErrorType>(Result);//返回错误信息
 }
 
 void CameraThread::NowOnFrameReady( int status )//左边相机帧处理
 {
-    qDebug()<<"camera Frameon ready"<<creatnumber<<"run"<<currentThreadId();;
     NowImage = QImage( GetWidth(),GetHeight(),QImage::Format_RGB888);
     FramePtr s_frame;
     s_frame=GetFrame();//获取帧
@@ -373,15 +367,16 @@ void CameraThread::NowOnFrameReady( int status )//左边相机帧处理
             {
                 VmbErrorType err = CopyToImage(pBuffer,ePixelFormat, NowImage);
                 emit QimageIsReady(err);
-            // Display it
+                // Display it
 
-            //Log("Left Camera display");
+                //Log("Left Camera display");
             }
         }
-    else {
-        qDebug()<< "Left Failure in receiving image", VmbErrorOther ;
-    }
-    qDebug()<<"success";
-    QueueFrame(s_frame);
+        else {
+            qDebug()<< "Left Failure in receiving image";
+        }
+        //qDebug()<<"success";
+
+        QueueFrame(s_frame);
     }
 }
