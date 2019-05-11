@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),LeftisRun(false),RightisRun(false)
 {
+    qDebug()<<"mainwindow currentThread ID"<<QThread::currentThreadId();
     ui->setupUi(this);
     VmbErrorType err=m_api.ApiStartUp();//Api启动
     Log("Vimbaopen",err);//api启动成功
