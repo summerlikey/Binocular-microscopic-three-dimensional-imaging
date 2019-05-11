@@ -7,6 +7,7 @@
 #include "VimbaCPP/Include/VimbaCPP.h"
 #include"api.h"
 #include "frameobserver.h"
+#include<QMutex>
 
 using namespace AVT::VmbAPI;
 class CameraThread:public QThread
@@ -37,9 +38,11 @@ public:
     QObject* GetFrameObserver();//QOject帧对象
     VmbInt64_t setFrameSize(VmbInt64_t nPLS);
     VmbPixelFormatType GetPixelFormat() const;//获取私有数据成员m_nPixelFormat
+    void DoNowFrame(FramePtr d_frame,int status);
     VmbErrorType CopyToImage(VmbUchar_t *pInBuffer,VmbPixelFormat_t ePixelFormat,QImage &pOutImage, const float *Matrix = NULL);//将缓冲区图像显示到qImage，并返回错误类型VmbErrorType err
 signals:
     void QimageIsReady(int ima);
+    void FrameReceivedSignal(int status);
 private:
     //QImage Lm_Image;// the qimage,最终采用qlabel显示
     QTimer timer;
@@ -56,7 +59,10 @@ private:
     VmbInt64_t m_nWidth;//目前的宽度
     VmbInt64_t m_nHeight;//目前的高度
     VmbInt64_t m_nPixelFormat;//格式
-    VmbInt64_t frameSize;
+    VmbInt64_t FrameSize;
+    std::queue<FramePtr>thread_Frames;//帧队列
+    QMutex thread_FramesMutex;//串行线程，锁住帧，不然跟着的帧改变还没处理完全的,只允许一个线程获得互斥量，程序中，两个相机两个线程，如果不用，将会导致帧还没充满，就使得帧被覆盖了，相当于网卡处线程，交替获得网卡的控制权
+
     //FramePtrVector frames();
 
 private slots:

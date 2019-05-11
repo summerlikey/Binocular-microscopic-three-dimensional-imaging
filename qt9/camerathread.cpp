@@ -157,15 +157,26 @@ void CameraThread::GetNowCamera(VimbaSystem &system,QString CameraId)
 
 void CameraThread::StopNowCamera()
 {
+
     FeaturePtr pFeature; // Generic feature pointer
     VmbErrorType err;
-    err = ThreadCamera->GetFeatureByName( "AcquisitionStop", pFeature );
-    pFeature ->RunCommand();
-    ThreadCamera -> EndCapture();
-    ClearFrameQueue();
-    ThreadCamera -> RevokeAllFrames();
+    qDebug()<<"1";
+    err = ThreadCamera -> GetFeatureByName( "AcquisitionStop", pFeature );
+    err = pFeature ->RunCommand();
+    qDebug()<<"ss";
+    if(err== VmbErrorSuccess)
+    {
+        qDebug()<<"stop camera";
+        ThreadCamera -> EndCapture();
+        ThreadCamera -> FlushQueue();
+        ThreadCamera -> RevokeAllFrames();
+        ThreadCamera->Close();
+    }
+    else
+    {
+        qDebug()<<"not stop success";
+    }
 
-    ThreadCamera->Close();
 
 }
 
@@ -194,6 +205,9 @@ void CameraThread::run()
         else{
             VmbErrorType err;
             qDebug()<<"cameraThread  run() 111222"<<creatnumber<<"run"<<currentThreadId();
+
+            //调用帧回调方式
+            /*
             if(GetCameraStatusIsRun()==true)
             {
 
@@ -205,8 +219,8 @@ void CameraThread::run()
                     pId=ba.data();
 
                 qDebug()<<*pId;
-                //估计原因不能打开相机线程里面明天继续看这原因
-                err=GetNowSystem(). OpenCameraByID(pId,VmbAccessModeFull,ThreadCamera);
+                //估计原因不能打开相机线程里面明天继续看这原因，已解决，相机打开成功原因id格式不对
+                err=GetNowSystem() . OpenCameraByID(pId,VmbAccessModeFull,ThreadCamera);
 
                 if(VmbErrorSuccess == err)//LeftCamera是引用值
                 {
@@ -239,7 +253,7 @@ void CameraThread::run()
                     //FeaturePtr pFeature; // Any camera feature
                     for ( FramePtrVector::iterator iter = frames.begin() ; frames.end() != iter ; ++iter )
                     {
-                        ( *iter ).reset( new Frame( frameSize ) );
+                        ( *iter ).reset( new Frame( FrameSize ) );
                         SP_SET (m_pFrameObserver,new FrameObserver(ThreadCamera));//新帧和新观察器绑定在一起，作用等同于上面两排
                         err = ( *iter )->RegisterObserver( m_pFrameObserver ) ;
                         ThreadCamera->AnnounceFrame(*iter);
@@ -266,11 +280,128 @@ void CameraThread::run()
                 else {
                     return;
                 }
-
-
-
             }
+            */
 
+            //直接采用队列方式
+            if(GetCameraStatusIsRun()==true)
+            {
+                VmbInt64_t nPLS; // Payload size value
+                FeaturePtr pFeature; // Generic feature pointer
+
+                    char *pId;
+                    QByteArray ba=NowCameraId.toLatin1();
+                    pId=ba.data();
+
+                qDebug()<<*pId;
+                //估计原因不能打开相机线程里面明天继续看这原因，已解决，相机打开成功原因id格式不对
+                err=GetNowSystem() . OpenCameraByID(pId,VmbAccessModeFull,ThreadCamera);
+                if(VmbErrorSuccess == err)//ThreadCamera是引用值
+                {
+                    qDebug()<<"camera open success";
+                    //设置数据包
+                    FeaturePtr pCommandFeature;//命令
+                    if(VmbErrorSuccess==ThreadCamera->GetFeatureByName("GVSPAdjustPacketSize",pCommandFeature))//设置最大数据包，当连接两台相机后，选择是否改变
+                    {
+                        pCommandFeature->RunCommand();
+                        //未检验是否成功
+                    }
+                    err = SetValueIntMod2( ThreadCamera,"Width", m_nWidth );//width
+                    err = SetValueIntMod2( ThreadCamera,"Height", m_nHeight );//height
+                    if(err==VmbErrorSuccess)
+                    {
+                        FeaturePtr pFormatFeature;
+                        ThreadCamera->GetFeatureByName("PixelFormat",pFormatFeature);
+                        pFormatFeature->GetValue(m_nPixelFormat);
+                        //设置格式、帧大小
+                        ThreadCamera ->GetFeatureByName("PayloadSize", pFeature);
+                        pFeature ->GetValue(nPLS);//大小
+                        setFrameSize(nPLS);
+
+                        //单个帧
+                        FramePtr frame;
+                        frame.reset( new Frame( FrameSize ));
+                        err= ThreadCamera -> StartCapture();
+                        err = ThreadCamera -> QueueFrame(frame);
+
+                        //初始多个帧队列
+//                        FramePtrVector frames( 15 );
+//                        for ( FramePtrVector::iterator iter = frames.begin() ; frames.end() != iter ; ++iter )
+//                        {
+//                            ( *iter ).reset( new Frame( FrameSize ) );
+//                            ThreadCamera->AnnounceFrame(*iter);
+//                        }
+//                        err = ThreadCamera->StartCapture();
+//                        for ( FramePtrVector::iterator iter = frames.begin();frames.end() != iter;++iter )
+//                        {
+//                            err=ThreadCamera -> QueueFrame(*iter);
+//                        }
+                        err = ThreadCamera -> GetFeatureByName( "AcquisitionStart", pFeature );
+                        err = pFeature ->RunCommand();
+                        while(1)
+                        {
+                            //注意目前图像处理函数在子线程循环里面，速度慢，目前只有一帧，如果需要提高将其传到主程序中排队处理，
+                            if(CameraStatusIsRun == false)
+                            {
+
+                                return ;
+                            }
+                            bool bQueueDirectly = false;
+                            VmbFrameStatusType eReceiveStatus;
+                            //qDebug()<<"signal";
+
+//                            while(frame -> GetReceiveStatus( eReceiveStatus ) !=0)
+//                            {
+//                                qDebug()<<eReceiveStatus;
+//                                //thread_FramesMutex.lock();
+//                                sleep(10);
+//                                thread_Frames.push( frame );
+//                                qDebug()<<"push frame " << QThread::currentThreadId();
+//                                if( eReceiveStatus != 0)
+//                                    qDebug()<<"no receive frame: "<<eReceiveStatus;
+//                                const VmbUchar_t* pBuffer;
+//                                err = frame->GetImage(pBuffer);
+//                                if(err == VmbErrorSuccess)
+//                                    qDebug() << "data " << *pBuffer <<QThread::currentThreadId();
+
+//                                //thread_FramesMutex.unlock();
+//                                emit FrameReceivedSignal( eReceiveStatus );//emit singal
+//                                bQueueDirectly = true;
+//                            }
+
+                            if(VmbErrorSuccess == frame ->GetReceiveStatus( eReceiveStatus ))
+                            {
+                                qDebug()<<eReceiveStatus;
+                                thread_FramesMutex.lock();
+                                sleep(2);
+                                thread_Frames.push( frame );
+                                qDebug()<<"push frame " << QThread::currentThreadId();
+                                if( eReceiveStatus != 0)
+                                    qDebug()<<"no receive frame: "<<eReceiveStatus;
+                                const VmbUchar_t* pBuffer;
+                                err = frame->GetImage(pBuffer);
+                                if(err == VmbErrorSuccess)
+                                    qDebug() << "data " << *pBuffer <<QThread::currentThreadId();
+
+                                thread_FramesMutex.unlock();
+                                emit FrameReceivedSignal( eReceiveStatus );//emit singal
+                                bQueueDirectly = true;
+                            }
+
+                            if( bQueueDirectly == false )
+                            {
+                                ThreadCamera -> QueueFrame( frame );
+                            }
+                            else
+                            {
+                                DoNowFrame(frame,eReceiveStatus);
+                            }
+
+                        }
+                        StopNowCamera();
+                    }
+                }
+            }
         qDebug()<<"can quit";
         //exec();//exec会让线程卡在这句话上，不会往下执行（除非调用exit或quit
         }
@@ -278,8 +409,8 @@ void CameraThread::run()
 }
 VmbInt64_t CameraThread::setFrameSize(VmbInt64_t nPLS)
 {
-    frameSize=nPLS;
-    return  frameSize;
+    FrameSize=nPLS;
+    return  FrameSize;
 }
 bool CameraThread::GetCameraStatusIsRun()
 {
@@ -354,6 +485,42 @@ VmbErrorType CameraThread :: CopyToImage(VmbUchar_t *pInBuffer, VmbPixelFormat_t
         return static_cast<VmbErrorType>( Result );
     }
     return static_cast<VmbErrorType>(Result);//返回错误信息
+}
+//直接处理
+void CameraThread::DoNowFrame(FramePtr d_frame,int status)
+{
+
+    NowImage = QImage( GetWidth(),GetHeight(),QImage::Format_RGB888);
+    if(SP_ISNULL(d_frame))//没有获取到帧
+    {
+        qDebug()<<"Left frame pointer is NULL, late frame ready message";
+        return;
+    }
+    if( VmbFrameStatusComplete == status )//完全帧
+    {
+        qDebug()<<"NowOnFrameReady"<<QThread::currentThreadId();
+        VmbUchar_t *pBuffer;
+        VmbErrorType err = d_frame->GetImage(pBuffer);//获取帧图像数据，没有标识位，全图像数据
+        if(VmbErrorSuccess==err)//缓冲区数据获取成功
+        {
+            VmbUint32_t nSize;
+            d_frame->GetImageSize( nSize );//图像大小
+            VmbPixelFormatType ePixelFormat = GetPixelFormat();//获取相机目前图像格式
+
+
+            if( ! NowImage.isNull() )//我们需要这个，因为Qt可能在我们已经释放帧之后重新绘制视图
+            {
+                VmbErrorType err = CopyToImage(pBuffer,ePixelFormat, NowImage);
+                emit QimageIsReady(err);
+            }
+        }
+        else {
+            qDebug()<< "Left Failure in receiving image";
+        }
+        //qDebug()<<"success";
+
+        QueueFrame(d_frame);
+    }
 }
 
 void CameraThread::NowOnFrameReady( int status )//左边相机帧处理

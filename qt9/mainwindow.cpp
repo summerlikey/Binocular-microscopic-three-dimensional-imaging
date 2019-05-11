@@ -167,6 +167,9 @@ void MainWindow::LeftCamera_StartStop()
     else {
         //停止线程
 //        LeftCameraThread.stopImmediately();//停止线程
+        LeftisRun=false;
+        LeftCameraThread->SetCameraStatusIsRun(LeftisRun);
+
         StopLeftCamera();
         LeftCameraThread->quit();
         if(LeftCameraThread->isRunning()==true)
@@ -176,8 +179,6 @@ void MainWindow::LeftCamera_StartStop()
         else {
             Log("is quit,quit success");
         }
-        LeftCameraThread->SetCameraStatusIsRun(false);
-        LeftisRun=false;
     }
 
     if(LeftisRun==true)
@@ -252,13 +253,13 @@ void MainWindow::RunRightCamera()
 void MainWindow::StopLeftCamera()
 {
     //左边相机Id  , DEV_000F315BA9A2
-    LeftCameraThread->StopNowCamera();
+    //LeftCameraThread->StopNowCamera();
     LeftCameraThread->SystemShutDown();
 }
 void MainWindow::StopRightCamera()
 {
     //右边相机Id  , DEV_000F315BA9A3
-    RightCameraThread->StopNowCamera();
+    //RightCameraThread->StopNowCamera();
     RightCameraThread->SystemShutDown();
 }
 
