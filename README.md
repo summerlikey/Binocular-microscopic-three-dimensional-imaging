@@ -27,7 +27,7 @@ User:
 # Image Capture and Image AcquisiƟon  
  ![image](https://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/acquistion.png)   
 # Qt .pro
-在.pro文件中设置    
+window系统在.pro文件中设置    
 INCLUDEPATH += $$(VIMBA_HOME)  
 INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaCPP\include"
 INCLUDEPATH += "C:\Program Files\Allied Vision\Vimba_2.1\VimbaImageTransform\include"
@@ -40,6 +40,38 @@ VimbaC.dll
 VimbaCPP.dll  
 VimbaCPPd.dll  
 VimbaImageTransform.dll  
+
+linux系统中的por
+
+#opencv include files  
+#INCLUDEPATH += /usr/local/include  
+#INCLUDEPATH += /usr/include/opencv2/  
+
+
+#vimba include files  
+#INCLUDEPATH += /usr/local/Vimba_2_1/  
+#INCLUDEPATH += /usr/local/Vimba_2_1/VimbaCPP/Examples  
+#INCLUDEPATH += /usr/local/Vimba_2_1/VimbaImageTransform/Include  
+
+INCLUDEPATH += /home/test-pc/Documents/Vimba_2_1/  
+INCLUDEPATH += /home/test-pc/Documents/Vimba_2_1/VimbaCPP/Examples  
+INCLUDEPATH += /home/test-pc/Documents/Vimba_2_1/VimbaImageTransform/Include  
+
+
+
+#opencv libs  
+#LIBS += -L"/usr/local/lib/"  
+#LIBS += -L"/usr/lib/"   
+#LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_video -lopencv_videoio -lx264 -lopencv_photo -lopencv_cudaarithm  -lopencv_cudafilters -lopencv_cudaimgproc  
+LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_photo  
+
+#Vimba libs  
+#LIBS += -L"/usr/local/Vimba_2_1/VimbaCPP/DynamicLib/x86_64bit/"  
+#LIBS += -L"/usr/local/Vimba_2_1/VimbaImageTransform/DynamicLib/x86_64bit/"  
+LIBS += -L"/home/test-pc/Documents/Vimba_2_1/VimbaCPP/DynamicLib/x86_64bit/"  
+LIBS += -L"/home/test-pc/Documents/Vimba_2_1/VimbaImageTransform/DynamicLib/x86_64bit/"  
+
+LIBS += -lVimbaC -lVimbaCPP -lVimbaImageTransform  
 
 # Qt 第三方库配置
 QT配置一直失败，无法链接，连接后需要run qmake一下   
