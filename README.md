@@ -40,7 +40,8 @@ VimbaC.dll
 VimbaCPP.dll  
 VimbaCPPd.dll  
 VimbaImageTransform.dll  
-
+linux系统中配置有限网ip和子网掩码  
+两个相机ip分别为169.254.127.127和169.254.171.220 所以配置时ip169.254.0.0和子网掩码255.255.0.0  
 linux系统中的por
 
 #opencv include files  
@@ -57,6 +58,9 @@ INCLUDEPATH += /home/ganggang/Downloads/Vimba_2_1/
 INCLUDEPATH += /home/ganggang/Downloads/Vimba_2_1/VimbaCPP/Examples  
 INCLUDEPATH += /home/ganggang/Downloads/Vimba_2_1/VimbaImageTransform/Include  
 
+LIBS += -L"/home/ganggang/Downloads/Vimba_2_1/VimbaCPP/DynamicLib/x86_64bit/"
+LIBS += -L"/home/ganggang/Downloads/Vimba_2_1/VimbaImageTransform/DynamicLib/x86_64bit/"
+LIBS += -lVimbaC -lVimbaCPP -lVimbaImageTransform
 
 
 #opencv libs  
