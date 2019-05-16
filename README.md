@@ -53,9 +53,9 @@ linux系统中的por
 #INCLUDEPATH += /usr/local/Vimba_2_1/VimbaCPP/Examples  
 #INCLUDEPATH += /usr/local/Vimba_2_1/VimbaImageTransform/Include  
 
-INCLUDEPATH += /home/test-pc/Documents/Vimba_2_1/  
-INCLUDEPATH += /home/test-pc/Documents/Vimba_2_1/VimbaCPP/Examples  
-INCLUDEPATH += /home/test-pc/Documents/Vimba_2_1/VimbaImageTransform/Include  
+INCLUDEPATH += /home/ganggang/Downloads/Vimba_2_1/  
+INCLUDEPATH += /home/ganggang/Downloads/Vimba_2_1/VimbaCPP/Examples  
+INCLUDEPATH += /home/ganggang/Downloads/Vimba_2_1/VimbaImageTransform/Include  
 
 
 
