@@ -26,6 +26,8 @@ User:
 # asynchronousGrab 异步
 # Image Capture and Image AcquisiƟon  
  ![image](https://github.com/summerlikey/Binocular-microscopic-three-dimensional-imaging/raw/master/image/acquistion.png)   
+ 如果一个网卡连接一个相机，StreamBytesPerSecond =124000000  
+ 如果一个网卡连接两个个相机，需要将带宽调整为一半，GVSPAdjustPacketSize 以及StreamBytesPerSecond = 62000000  
 # Qt .pro
 window系统在.pro文件中设置    
 INCLUDEPATH += $$(VIMBA_HOME)  
