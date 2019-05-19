@@ -4,6 +4,7 @@
 #include <QString>
 #include<QDebug>
 #include "VmbTransform.h"
+#include "VmbTransformTypes.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),LeftIsStream(false),RightIsStream(false)
@@ -26,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->ui-> Label_LeftCameraLightStatus ->setPixmap(QPixmap(":/image/red").scaled(15,15));//左边相机状态灯
     this->ui-> Label_RightCameraLightStatus ->setPixmap(QPixmap(":/image/red").scaled(15,15));//右边相机状态灯
+    this->ui-> Label_ProjectorLightStatus ->setPixmap(QPixmap(":/image/red").scaled(15,15));//右边相机状态灯
 
     VmbErrorType err =  NowApiController.StartUp();
 
@@ -38,11 +40,15 @@ MainWindow::MainWindow(QWidget *parent) :
         // Initially get all connected cameras
         UpdateCameraListBox();
         std::stringstream strMsg;
-        strMsg << "Cameras found..." << AllCameras.size();
+        strMsg << "Cameras found..." << AllCamerasId.size();
         Log(strMsg.str() );
     }
 
     QObject::connect( ui -> Btn_TwoCameraStartStop , SIGNAL( clicked() ), this, SLOT( OnClickedBtn_TwoStartStop() ) );
+
+    QObject::connect( ui -> Btn_LeftCameraStartStop , SIGNAL( clicked() ), this, SLOT( OnCLickedBtn_LeftCameraStartStop() ) );
+
+    QObject::connect( ui -> Btn_RightCameraStartStop , SIGNAL( clicked() ), this, SLOT( OnCLickedBtn_RightCameraStartStop() ) );
 
 
 }
@@ -63,7 +69,7 @@ void MainWindow::OnCameraListChanged(int reason)
     {
         UpdateCameraListBox();//当相机变化更新盒子
     }
-    ui->Btn_TwoCameraStartStop->setEnabled( 0 < AllCameras.size() || ( LeftIsStream || RightIsStream ) );
+    ui->Btn_TwoCameraStartStop->setEnabled( 0 < AllCamerasId.size() || ( LeftIsStream || RightIsStream ) );
 }
 
 void MainWindow::UpdateCameraListBox()
@@ -73,7 +79,7 @@ void MainWindow::UpdateCameraListBox()
 
     // Simply forget about all cameras known so far
     ui->LW_Cameras->clear();
-    AllCameras.clear();  //vector of string for cameras..
+    AllCamerasId.clear();  //vector of string for cameras..
     this->ui-> Label_LeftCameraLightStatus -> setPixmap(QPixmap(":/image/red").scaled(15,15));//左边相机状态灯
     this->ui-> Label_RightCameraLightStatus -> setPixmap(QPixmap(":/image/red").scaled(15,15));//左边相机状态灯
 
@@ -92,7 +98,7 @@ void MainWindow::UpdateCameraListBox()
         if( VmbErrorSuccess == (*iter)->GetID( strCameraID ) )
         {
             ui->LW_Cameras->addItem( QString::fromStdString( strCameraName + " " +strCameraID ) );
-            AllCameras.push_back( strCameraID );
+            AllCamerasId.push_back( strCameraID );
             if( LeftCameraId == QString::fromStdString(strCameraID))
             {
                 //Log("Left camera is found");
@@ -107,7 +113,98 @@ void MainWindow::UpdateCameraListBox()
             }
         }
     }
-    ui->Btn_TwoCameraStartStop->setEnabled( 0 < AllCameras.size() || ( LeftIsStream || RightIsStream ) );
+    ui->Btn_TwoCameraStartStop->setEnabled( 0 < AllCamerasId.size() || ( LeftIsStream || RightIsStream ) );
+}
+
+void MainWindow::OnCLickedBtn_LeftCameraStartStop()
+{
+    VmbErrorType err;
+    int nRow = ui->LW_Cameras -> count();
+    if(nRow>0)
+    {
+        if(false ==LeftIsStream)
+        {
+            int pixel_format = 0;//mono8 mark
+            err = NowApiController.StartContinuousAcquisitionOfLeftCameras(AllCamerasId[0],pixel_format);
+
+            //set qt image
+            if(VmbErrorSuccess == err )
+            {
+                LeftQImage = QImage( NowApiController.GetLeftWidth(),
+                                  NowApiController.GetLeftHeight(),
+                                  QImage::Format_Grayscale8 );
+                //start multiple acquisition frame observers -> number of cameras...
+                QObject::connect( NowApiController.GetLeftFrameObserver(), SIGNAL( FrameReceivedSignal(int, QString) ), this, SLOT( OnLeftFrameReady(int, QString) ) );
+            }
+            Log( "Left Starting Acquisition", err );
+            LeftIsStream = VmbErrorSuccess == err;
+        }
+        else
+        {
+            LeftIsStream = false;
+            //RightIsStream = false;
+            // Stop acquisition
+            err = NowApiController.StopLeftContinuousImageAcquisition();
+            // Clear all frames that we have not picked up so far
+            NowApiController.ClearLeftFrameQueue();
+            LeftQImage = QImage();
+            Log( "Stopping Acquisition", err );
+        }
+        if( false == LeftIsStream)
+        {
+            ui->Btn_LeftCameraStartStop -> setText( QString( "Start Image Acquisition" ) );
+        }
+        else
+        {
+            ui->Btn_LeftCameraStartStop -> setText( QString( "Stop Image Acquisition" ) );
+        }
+    }
+}
+
+void MainWindow::OnCLickedBtn_RightCameraStartStop()
+{
+    VmbErrorType err;
+    int nRow = ui->LW_Cameras -> count();
+    if(nRow>0)
+    {
+        if(false ==RightIsStream)
+        {
+            int pixel_format = 0;//mono8 mark
+            err = NowApiController.StartContinuousAcquisitionOfRightCameras(AllCamerasId[1],pixel_format);
+
+            //set qt image
+            if(VmbErrorSuccess == err )
+            {
+                RightQImage = QImage( NowApiController.GetRightWidth(),
+                                  NowApiController.GetRightHeight(),
+                                  QImage::Format_Grayscale8 );
+                //start multiple acquisition frame observers -> number of cameras...
+
+                QObject::connect( NowApiController.GetRightFrameObserver(), SIGNAL( FrameReceivedSignal(int, QString) ), this, SLOT( OnRightFrameReady(int, QString) ) );
+            }
+            Log( "Right Starting Acquisition", err );
+            RightIsStream = VmbErrorSuccess == err;
+        }
+        else
+        {
+            RightIsStream = false;
+            //RightIsStream = false;
+            // Stop acquisition
+            err = NowApiController.StopRightContinuousImageAcquisition();
+            // Clear all frames that we have not picked up so far
+            NowApiController.ClearRightFrameQueue();
+            RightQImage = QImage();
+            Log( "Stopping Acquisition", err );
+        }
+        if( false == RightIsStream)
+        {
+            ui->Btn_RightCameraStartStop -> setText( QString( "Start Image Acquisition" ) );
+        }
+        else
+        {
+            ui->Btn_RightCameraStartStop -> setText( QString( "Stop Image Acquisition" ) );
+        }
+    }
 }
 
 void MainWindow::OnClickedBtn_TwoStartStop()
@@ -120,8 +217,8 @@ void MainWindow::OnClickedBtn_TwoStartStop()
         if(( false == LeftIsStream ) && (false == RightIsStream ) )
         {
             // Start acquisition
-            int pixel_format = 0; //mono
-            err = NowApiController.StartContinuousAcquisitionOfTwoCameras(AllCameras[0], pixel_format, AllCameras[1], pixel_format);
+            int pixel_format = 0; //mono8
+            err = NowApiController.StartContinuousAcquisitionOfTwoCameras(AllCamerasId[0], pixel_format, AllCamerasId[1], pixel_format);
 
 
             // Set up Qt image
@@ -129,21 +226,19 @@ void MainWindow::OnClickedBtn_TwoStartStop()
             {
                 LeftQImage = QImage( NowApiController.GetLeftWidth(),
                                   NowApiController.GetLeftHeight(),
-                                  QImage::Format_RGB888 );
+                                  QImage::Format_Grayscale8 );
 
                 RightQImage = QImage( NowApiController.GetRightWidth(),
                                   NowApiController.GetRightHeight(),
-                                  QImage::Format_RGB888 );
+                                  QImage::Format_Grayscale8 );
 
                 //start multiple acquisition frame observers -> number of cameras...
                 QObject::connect( NowApiController.GetLeftFrameObserver(), SIGNAL( FrameReceivedSignal(int, QString) ), this, SLOT( OnLeftFrameReady(int, QString) ) );
                 QObject::connect( NowApiController.GetRightFrameObserver(), SIGNAL( FrameReceivedSignal(int, QString) ), this, SLOT( OnRightFrameReady(int, QString) ) );
 
-
             }
             Log( "Starting Acquisition", err );
             LeftIsStream = VmbErrorSuccess == err;
-            qDebug()<<err;
             RightIsStream = VmbErrorSuccess == err;
 
         }
@@ -174,8 +269,6 @@ void MainWindow::OnClickedBtn_TwoStartStop()
 void MainWindow::OnLeftFrameReady(int status, QString camera )
 {
     std::string cameraname = camera.toStdString();
-
-    Log(cameraname);
 
     if( true == LeftIsStream)
     {
@@ -247,9 +340,6 @@ void MainWindow::OnLeftFrameReady(int status, QString camera )
 void MainWindow::OnRightFrameReady(int status, QString camera )
 {
     std::string cameraname = camera.toStdString();
-
-    Log(cameraname);
-
     if( true == RightIsStream)
     {
         // Pick up frame
@@ -322,16 +412,23 @@ VmbErrorType MainWindow::CopyToImage( VmbUchar_t *pInBuffer, VmbPixelFormat_t eP
     int iWidth = static_cast<int>(nWidth);
     int iHeight = static_cast<int>(nHeight);
 
-    VmbImage            SourceImage;
-    VmbImage            DestImage;
+    pOutImage = QImage(pInBuffer,iWidth,iHeight,QImage::Format_Grayscale8, 0 , 0 );
+
     VmbError_t          Result;
+    Result = 0;
+
+    /*
+    qDebug()<<*pInBuffer;
+    VmbImage SourceImage;
+    VmbImage DestImage;
+
     SourceImage.Size    = sizeof( SourceImage );
     DestImage.Size      = sizeof( DestImage );
-    qDebug()<<SourceImage.Size;
-    Result = VmbSetImageInfoFromPixelFormat( ePixelFormat, nWidth, nHeight, &SourceImage );
+    SourceImage.Data    = pInBuffer;
+    Result = VmbSetImageInfoFromPixelFormat( ePixelFormat, nWidth, nHeight, & SourceImage );//从像素格式设置SourceImgae中的图像信息成员值
     if( VmbErrorSuccess != Result )
     {
-        qDebug()<<"44";
+        qDebug()<<"55";
         Log( "Could not set source image info", static_cast<VmbErrorType>( Result ) );
         return static_cast<VmbErrorType>( Result );
     }
@@ -350,8 +447,14 @@ VmbErrorType MainWindow::CopyToImage( VmbUchar_t *pInBuffer, VmbPixelFormat_t eP
         }
         OutputFormat = "RGB24";
         break;
+    case QImage::Format_Grayscale8:
+        OutputFormat = "MONO8";
+        break;
+
     }
-    Result = VmbSetImageInfoFromString( OutputFormat.toStdString().c_str(), OutputFormat.length(),nWidth,nHeight, &DestImage );
+    VmbUint32_t           stringLength;
+    stringLength = static_cast<VmbUint32_t>(OutputFormat.length()) ;
+    Result = VmbSetImageInfoFromString( OutputFormat.toStdString().c_str(), stringLength,nWidth,nHeight, &DestImage );
     if( VmbErrorSuccess != Result )
     {
         Log( "could not set output image info",static_cast<VmbErrorType>( Result ) );
@@ -378,6 +481,7 @@ VmbErrorType MainWindow::CopyToImage( VmbUchar_t *pInBuffer, VmbPixelFormat_t eP
     {
         Result = VmbImageTransform( &SourceImage, &DestImage,NULL,0 );
     }
+    */
     if( VmbErrorSuccess != Result )
     {
         Log( "could not transform image", static_cast<VmbErrorType>( Result ) );

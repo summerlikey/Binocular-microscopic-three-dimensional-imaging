@@ -24,6 +24,8 @@ public:
     void GetRightCameraId();
 private slots:
     void OnCameraListChanged(int reason );
+    void OnCLickedBtn_LeftCameraStartStop();
+    void OnCLickedBtn_RightCameraStartStop();
     void OnClickedBtn_TwoStartStop();
     void OnLeftFrameReady(int status, QString camera );
     void OnRightFrameReady(int status, QString camera );
@@ -36,7 +38,7 @@ private:
     // Our controller that wraps API access
     ApiController NowApiController;
     // A list of known camera IDs
-    std::vector<std::string> AllCameras;
+    std::vector<std::string> AllCamerasId;
     void UpdateCameraListBox();
 
     VmbErrorType CopyToImage( VmbUchar_t *pInBuffer, VmbPixelFormat_t ePixelFormat, VmbUint32_t nHeight, VmbUint32_t nWidth, QImage &pOutImage, const float *Matrix /*= NULL */ );

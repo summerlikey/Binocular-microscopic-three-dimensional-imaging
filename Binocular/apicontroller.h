@@ -27,11 +27,17 @@ public:
     VmbUint32_t GetLeftHeightVmb32() const;
     VmbUint32_t GetRightWidthVmb32() const;
     VmbUint32_t GetRightHeightVmb32() const;
+    VmbErrorType StartContinuousAcquisitionOfLeftCameras( const std::string &lStrCameraID ,int pixel_mode);
+    VmbErrorType StartContinuousAcquisitionOfRightCameras( const std::string &rStrCameraID ,int pixel_mode);
     VmbErrorType StartContinuousAcquisitionOfTwoCameras( const std::string &rStrCameraID ,int pixel_mode, const std::string &rStrCameraID2, int pixel_mode2 );
+    VmbErrorType StopLeftContinuousImageAcquisition();
+    VmbErrorType StopRightContinuousImageAcquisition();
     VmbErrorType StopContinuousImageAcquisition();
 
     QObject*            GetLeftFrameObserver();
     QObject*            GetRightFrameObserver();
+    void ClearLeftFrameQueue();
+    void ClearRightFrameQueue();
     void ClearFrameQueue();
     VmbPixelFormatType  GetLeftPixelFormat() const;
     VmbPixelFormatType  GetRightPixelFormat() const;
@@ -45,6 +51,7 @@ private:
   VimbaSystem& NowSystem;
 
   ICameraListObserverPtr m_pCameraObserver;//Camera Observer
+  VmbInt64_t                  StreamBytes;
 
   VmbInt64_t                  LeftWidth;
   // The current height
