@@ -8,7 +8,7 @@
 #include <string>
 using namespace AVT::VmbAPI;
 
-class ApiController
+class ApiController: public QObject
 {
 public:
     ApiController();
@@ -34,6 +34,8 @@ public:
     VmbErrorType StopRightContinuousImageAcquisition();
     VmbErrorType StopContinuousImageAcquisition();
 
+
+
     QObject*            GetLeftFrameObserver();
     QObject*            GetRightFrameObserver();
     void ClearLeftFrameQueue();
@@ -46,9 +48,19 @@ public:
     VmbErrorType        QueueLeftFrame( FramePtr pFrame );
     VmbErrorType        QueueRightFrame( FramePtr pFrame );
 
+    VmbErrorType SetExposure(const CameraPtr &camera, int exposure_value);
+
+
+    static int leftexposure;
+signals :
+
+
 private:
   // A reference to our Vimba singleton
   VimbaSystem& NowSystem;
+
+  int LeftExposure;
+  int RightExposure;
 
   ICameraListObserverPtr m_pCameraObserver;//Camera Observer
   VmbInt64_t                  StreamBytes;

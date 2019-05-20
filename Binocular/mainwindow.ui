@@ -21,11 +21,17 @@
    <widget class="QPushButton" name="Btn_TwoCameraStartStop">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>310</y>
+      <x>780</x>
+      <y>190</y>
       <width>151</width>
-      <height>21</height>
+      <height>26</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>130</width>
+      <height>26</height>
+     </size>
     </property>
     <property name="text">
      <string>two camera start stop</string>
@@ -198,7 +204,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -239,7 +245,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -280,46 +286,125 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>800</x>
-      <y>150</y>
-      <width>107</width>
-      <height>28</height>
+      <x>450</x>
+      <y>510</y>
+      <width>188</width>
+      <height>29</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <property name="spacing">
-      <number>10</number>
-     </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <widget class="QLabel" name="Label_ProjectorLightStatus">
+      <widget class="QSlider" name="HS_RightExposure">
        <property name="minimumSize">
         <size>
-         <width>15</width>
-         <height>15</height>
+         <width>100</width>
+         <height>0</height>
         </size>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>15</width>
-         <height>15</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>TextLabel</string>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Btn_Projector">
-       <property name="text">
-        <string>DLP4500</string>
+      <widget class="QSpinBox" name="SB_RightExposure">
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
        </property>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>451</x>
+      <y>191</y>
+      <width>188</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QSlider" name="HS_LeftExposure">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="SB_LeftExposure">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="Label_ProjectorLightStatus">
+    <property name="geometry">
+     <rect>
+      <x>781</x>
+      <y>156</y>
+      <width>15</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>15</width>
+      <height>15</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>15</width>
+      <height>15</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Btn_Projector">
+    <property name="geometry">
+     <rect>
+      <x>806</x>
+      <y>151</y>
+      <width>130</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>130</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>DLP4500</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

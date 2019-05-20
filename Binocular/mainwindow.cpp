@@ -5,6 +5,8 @@
 #include<QDebug>
 #include "VmbTransform.h"
 #include "VmbTransformTypes.h"
+#include <QLineEdit>
+#include <QAbstractSlider>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),LeftIsStream(false),RightIsStream(false)
@@ -28,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui-> Label_LeftCameraLightStatus ->setPixmap(QPixmap(":/image/red").scaled(15,15));//左边相机状态灯
     this->ui-> Label_RightCameraLightStatus ->setPixmap(QPixmap(":/image/red").scaled(15,15));//右边相机状态灯
     this->ui-> Label_ProjectorLightStatus ->setPixmap(QPixmap(":/image/red").scaled(15,15));//右边相机状态灯
+
+    SetChangeExposure();//the sxposure change
 
     VmbErrorType err =  NowApiController.StartUp();
 
@@ -71,6 +75,44 @@ void MainWindow::OnCameraListChanged(int reason)
     }
     ui->Btn_TwoCameraStartStop->setEnabled( 0 < AllCamerasId.size() || ( LeftIsStream || RightIsStream ) );
 }
+
+void MainWindow::SetChangeExposure()
+{
+    //slider**********
+    int ndefaults=150000;
+    int nmin=14;
+    int nmax=891072;
+    int nSingleStep = 100;
+    this ->ui ->HS_LeftExposure ->setRange(14,891072);
+    this ->ui ->HS_LeftExposure ->setSingleStep(nSingleStep);
+    this ->ui ->SB_LeftExposure ->setMinimum(nmin);
+    this ->ui ->SB_LeftExposure ->setMaximum(nmax);
+    this ->ui ->SB_LeftExposure ->setSingleStep(nSingleStep);
+    this ->ui ->HS_LeftExposure ->setValue(ndefaults);
+    this ->ui ->SB_LeftExposure ->setValue(ndefaults);
+
+    connect(this->ui->SB_LeftExposure,SIGNAL(valueChanged(int)),this->ui->HS_LeftExposure,SLOT(setValue(int)));
+    connect(this->ui->HS_LeftExposure,SIGNAL(valueChanged(int)),this->ui->SB_LeftExposure,SLOT(setValue(int)));
+
+
+
+
+    this ->ui ->HS_RightExposure ->setRange(14,891072);
+    this ->ui ->HS_RightExposure ->setSingleStep(nSingleStep);
+    this ->ui ->SB_RightExposure ->setMinimum(nmin);
+    this ->ui ->SB_RightExposure ->setMaximum(nmax);
+    this ->ui ->SB_RightExposure ->setSingleStep(nSingleStep);
+    this ->ui ->HS_RightExposure ->setValue(ndefaults);
+    this ->ui ->SB_RightExposure ->setValue(ndefaults);
+
+    connect(this->ui->SB_RightExposure,SIGNAL(valueChanged(int)),this->ui->HS_RightExposure,SLOT(setValue(int)));
+    connect(this->ui->HS_RightExposure,SIGNAL(valueChanged(int)),this->ui->SB_RightExposure,SLOT(setValue(int)));
+    
+
+
+    //***********
+}
+
 
 void MainWindow::UpdateCameraListBox()
 {
@@ -489,7 +531,6 @@ VmbErrorType MainWindow::CopyToImage( VmbUchar_t *pInBuffer, VmbPixelFormat_t eP
     }
     return static_cast<VmbErrorType>( Result );
 }
-
 
 // Prints out a given logging string, error code and the descriptive representation of that error code
 //

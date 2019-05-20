@@ -9,6 +9,9 @@ ApiController::~ApiController()
 {
 
 }
+
+int ApiController::leftexposure=0;//
+
 std::string ApiController::ErrorCodeToMessages(VmbErrorType eErr)
 {
     return ErrorCodeToMessage(eErr);
@@ -115,13 +118,35 @@ VmbErrorType ApiController::QueueRightFrame( FramePtr pFrame )
     return SP_ACCESS( RightCamera )->QueueFrame( pFrame );
 }
 
+VmbErrorType ApiController::SetExposure( const CameraPtr &camera, int exposure_value )
+{
+    VmbErrorType res;
+    //set manual exposure..
+    FeaturePtr pExposuremode;
+    res = SP_ACCESS( camera )->GetFeatureByName( "ExposureMode", pExposuremode );
+    if( VmbErrorSuccess == res )
+        res = SP_ACCESS( pExposuremode )->SetValue ("ExposureAuto_Off");
+
+    //set manual exposure supplied as a argument.
+    FeaturePtr pSetExposure;
+    res = SP_ACCESS( camera )->GetFeatureByName("ExposureTimeAbs", pSetExposure);
+    if( VmbErrorSuccess == res )
+        res = SP_ACCESS( pSetExposure )->SetValue(exposure_value);
+    return res;
+}
+
+
+
 VmbErrorType ApiController::StartContinuousAcquisitionOfLeftCameras( const std::string &lStrCameraID ,int pixel_mode)
 {
+    qDebug()<<"11";
     QString res1;
     res1 = QString::fromStdString(lStrCameraID);
     VmbErrorType res = NowSystem.OpenCameraByID( lStrCameraID.c_str(), VmbAccessModeFull, LeftCamera );
     if( VmbErrorSuccess == res )
     {
+
+        
         FeaturePtr pFeature; // Generic feature pointer
         LeftCamera -> GetFeatureByName("StreamBytesPerSecond",pFeature);
 
@@ -401,9 +426,9 @@ VmbErrorType ApiController::StopLeftContinuousImageAcquisition()
 
     // Close cameras
     res = LeftCamera->Close();
-    if (res == VmbErrorSuccess)
+    if (res == VmbErrorSuccess){
         //res = RightCamera->Close();
-
+    }
     return  res;
 }
 VmbErrorType ApiController::StopRightContinuousImageAcquisition()
@@ -416,8 +441,9 @@ VmbErrorType ApiController::StopRightContinuousImageAcquisition()
 
     // Close cameras
     res = RightCamera->Close();
-    if (res == VmbErrorSuccess)
+    if (res == VmbErrorSuccess){
         //res = RightCamera->Close();
+    }
 
     return  res;
 }
@@ -434,9 +460,12 @@ VmbErrorType ApiController::StopContinuousImageAcquisition()
     if (res == VmbErrorSuccess)
         res = RightCamera->Close();
 
-
     return  res;
 }
+
+
+
+
 //
 // Returns the frame observer as QObject pointer to connect their signals to the view's slots
 //

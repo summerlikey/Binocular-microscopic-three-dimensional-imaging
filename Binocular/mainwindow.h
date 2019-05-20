@@ -22,6 +22,7 @@ public:
     QImage Image_SI;// show image
     void GetLeftCameraId();
     void GetRightCameraId();
+    void SetChangeExposure();
 private slots:
     void OnCameraListChanged(int reason );
     void OnCLickedBtn_LeftCameraStartStop();
@@ -29,6 +30,9 @@ private slots:
     void OnClickedBtn_TwoStartStop();
     void OnLeftFrameReady(int status, QString camera );
     void OnRightFrameReady(int status, QString camera );
+
+
+
 private:
     Ui::MainWindow *ui;
     //Left camera DEV_000F315BA9A2
