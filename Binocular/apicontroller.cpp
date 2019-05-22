@@ -118,28 +118,56 @@ VmbErrorType ApiController::QueueRightFrame( FramePtr pFrame )
     return SP_ACCESS( RightCamera )->QueueFrame( pFrame );
 }
 
-VmbErrorType ApiController::SetExposure( const CameraPtr &camera, int exposure_value )
+VmbErrorType ApiController::SetApiLeftExposure(int exposure_value )
 {
+    double dex;
+    dex = static_cast <double> (exposure_value);
     VmbErrorType res;
     //set manual exposure..
-    FeaturePtr pExposuremode;
-    res = SP_ACCESS( camera )->GetFeatureByName( "ExposureMode", pExposuremode );
-    if( VmbErrorSuccess == res )
-        res = SP_ACCESS( pExposuremode )->SetValue ("ExposureAuto_Off");
+    FeaturePtr pfeature;
+    LeftCamera -> GetFeatureByName("ExposureTimeAbs",pfeature);
+    res = pfeature -> SetValue(dex);
+//    FeaturePtr pExposuremode;
+//    res = SP_ACCESS( LeftCamera )->GetFeatureByName( "ExposureMode", pExposuremode );
+//    if( VmbErrorSuccess == res )
+//        res = SP_ACCESS( pExposuremode )->SetValue ("Off");
+//    qDebug()<<res;
+//    //set manual exposure supplied as a argument.
+//    FeaturePtr pSetExposure;
+//    res = SP_ACCESS( LeftCamera )->GetFeatureByName("ExposureTimeAbs", pSetExposure);
+//    if( VmbErrorSuccess == res )
+//        res = SP_ACCESS( pSetExposure )->SetValue(exposure_value);
+    return res;
+}
 
-    //set manual exposure supplied as a argument.
-    FeaturePtr pSetExposure;
-    res = SP_ACCESS( camera )->GetFeatureByName("ExposureTimeAbs", pSetExposure);
-    if( VmbErrorSuccess == res )
-        res = SP_ACCESS( pSetExposure )->SetValue(exposure_value);
+
+VmbErrorType ApiController::SetApiRightExposure(int exposure_value )
+{
+    double dex;
+    dex = static_cast <double> (exposure_value);
+    VmbErrorType res;
+    //set manual exposure..
+    FeaturePtr pfeature;
+    RightCamera -> GetFeatureByName("ExposureTimeAbs",pfeature);
+    res = pfeature -> SetValue(dex);
+//    FeaturePtr pExposuremode;
+//    res = SP_ACCESS( LeftCamera )->GetFeatureByName( "ExposureMode", pExposuremode );
+//    if( VmbErrorSuccess == res )
+//        res = SP_ACCESS( pExposuremode )->SetValue ("Off");
+//    qDebug()<<res;
+//    //set manual exposure supplied as a argument.
+//    FeaturePtr pSetExposure;
+//    res = SP_ACCESS( LeftCamera )->GetFeatureByName("ExposureTimeAbs", pSetExposure);
+//    if( VmbErrorSuccess == res )
+//        res = SP_ACCESS( pSetExposure )->SetValue(exposure_value);
     return res;
 }
 
 
 
+
 VmbErrorType ApiController::StartContinuousAcquisitionOfLeftCameras( const std::string &lStrCameraID ,int pixel_mode)
 {
-    qDebug()<<"11";
     QString res1;
     res1 = QString::fromStdString(lStrCameraID);
     VmbErrorType res = NowSystem.OpenCameraByID( lStrCameraID.c_str(), VmbAccessModeFull, LeftCamera );
@@ -464,8 +492,6 @@ VmbErrorType ApiController::StopContinuousImageAcquisition()
 }
 
 
-
-
 //
 // Returns the frame observer as QObject pointer to connect their signals to the view's slots
 //
@@ -473,7 +499,6 @@ QObject* ApiController::GetLeftFrameObserver()
 {
     return SP_DYN_CAST( LeftFrameObserver, FrameObserver ).get();
 }
-
 
 //
 // Returns the frame observer as QObject pointer to connect their signals to the view's slots

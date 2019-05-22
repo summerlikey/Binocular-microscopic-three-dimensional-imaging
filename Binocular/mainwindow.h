@@ -30,8 +30,8 @@ private slots:
     void OnClickedBtn_TwoStartStop();
     void OnLeftFrameReady(int status, QString camera );
     void OnRightFrameReady(int status, QString camera );
-
-
+    void setLeftExposure(int value);
+    void setRightExposure(int value);
 
 private:
     Ui::MainWindow *ui;

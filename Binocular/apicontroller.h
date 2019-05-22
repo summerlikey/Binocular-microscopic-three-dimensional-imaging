@@ -48,8 +48,9 @@ public:
     VmbErrorType        QueueLeftFrame( FramePtr pFrame );
     VmbErrorType        QueueRightFrame( FramePtr pFrame );
 
-    VmbErrorType SetExposure(const CameraPtr &camera, int exposure_value);
-
+    VmbErrorType SetApiLeftExposure(int exposure_value);
+    VmbErrorType SetApiRightExposure(int exposure_value);
+    //void setLeftExposure(int value);
 
     static int leftexposure;
 signals :
@@ -58,9 +59,6 @@ signals :
 private:
   // A reference to our Vimba singleton
   VimbaSystem& NowSystem;
-
-  int LeftExposure;
-  int RightExposure;
 
   ICameraListObserverPtr m_pCameraObserver;//Camera Observer
   VmbInt64_t                  StreamBytes;

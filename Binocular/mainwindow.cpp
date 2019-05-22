@@ -94,7 +94,7 @@ void MainWindow::SetChangeExposure()
     connect(this->ui->SB_LeftExposure,SIGNAL(valueChanged(int)),this->ui->HS_LeftExposure,SLOT(setValue(int)));
     connect(this->ui->HS_LeftExposure,SIGNAL(valueChanged(int)),this->ui->SB_LeftExposure,SLOT(setValue(int)));
 
-
+    connect(this ->ui ->HS_LeftExposure,SIGNAL(valueChanged(int)),this ,SLOT(setLeftExposure(int)));
 
 
     this ->ui ->HS_RightExposure ->setRange(14,891072);
@@ -107,12 +107,27 @@ void MainWindow::SetChangeExposure()
 
     connect(this->ui->SB_RightExposure,SIGNAL(valueChanged(int)),this->ui->HS_RightExposure,SLOT(setValue(int)));
     connect(this->ui->HS_RightExposure,SIGNAL(valueChanged(int)),this->ui->SB_RightExposure,SLOT(setValue(int)));
-    
 
-
+    connect(this ->ui ->HS_RightExposure,SIGNAL(valueChanged(int)),this ,SLOT(setRightExposure(int)));
     //***********
 }
 
+void MainWindow::setLeftExposure(int value)
+{
+    if(LeftIsStream == false)
+        return;
+    VmbErrorType err = NowApiController.SetApiLeftExposure(value);
+    //Log("LeftExposure set",err);
+}
+
+void MainWindow::setRightExposure(int value)
+{
+    if(RightIsStream ==false)
+        return;
+
+    VmbErrorType err = NowApiController.SetApiRightExposure(value);
+    //Log("RightExposure set",err);
+}
 
 void MainWindow::UpdateCameraListBox()
 {
