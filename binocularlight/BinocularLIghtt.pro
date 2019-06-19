@@ -66,17 +66,17 @@ LIBS += -L"/home/ganggang/Downloads/Vimba_2_1/VimbaCPP/DynamicLib/x86_64bit/"
 LIBS += -L"/home/ganggang/Downloads/Vimba_2_1/VimbaImageTransform/DynamicLib/x86_64bit/"
 LIBS += -lVimbaC -lVimbaCPP -lVimbaImageTransform
 
-win32:CONFIG(release, debug|release): LIBS += -L../GUI/hidapi-master/windows/release/ -lhidapi
-else:win32:CONFIG(debug, debug|release): LIBS += -L../GUI/hidapi-master/windows/debug/ -lhidapi
-macx: SOURCES += ../GUI/hidapi-master/mac/hid.c
-unix: !macx: SOURCES += ../GUI/hidapi-master/linux/hid.c
+win32:CONFIG(release, debug|release): LIBS += -L../binocularlight/hidapi-master/windows/release/ -lhidapi
+else:win32:CONFIG(debug, debug|release): LIBS += -L../binocularlight/hidapi-master/windows/debug/ -lhidapi
+macx: SOURCES += ../binocularlight/hidapi-master/mac/hid.c
+unix: !macx: SOURCES += ../binocularlight/hidapi-master/linux/hid.c
 
 macx: LIBS += -framework CoreFoundation -framework IOkit
 win32: LIBS += -lSetupAPI
 unix: !macx: LIBS += -lusb-1.0 -ludev
 
-INCLUDEPATH += ../GUI/hidapi-master/hidapi
-DEPENDPATH += ../GUI/hidapi-master/hidapi
+INCLUDEPATH += ../binocularlight/hidapi-master/hidapi
+DEPENDPATH += ../binocularlight/hidapi-master/hidapi
 
 OTHER_FILES +=  icons\LCr4500.rc \
                 icons\LCr4500.ico

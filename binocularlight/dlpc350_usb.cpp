@@ -45,7 +45,7 @@
 #include "hidapi.h"
 
 #include "lightmainwindow.h"
-#include "ui_mainwindow.h"
+#include "ui_lightmainwindow.h"
 #include <QMessageBox>
 #include <QTimer>
 
