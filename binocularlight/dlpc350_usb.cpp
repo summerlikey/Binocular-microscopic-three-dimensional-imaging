@@ -48,7 +48,7 @@
 #include "ui_lightmainwindow.h"
 #include <QMessageBox>
 #include <QTimer>
-
+#include<QDebug>
 /***************************************************
 *                  GLOBAL VARIABLES
 ****************************************************/
@@ -69,6 +69,7 @@ int DLPC350_USB_IsConnected()
 
 int DLPC350_USB_Init(void)
 {
+    qDebug()<<"hid_init";
     return hid_init();
 }
 
@@ -82,9 +83,11 @@ int DLPC350_USB_Open()
     // Open the device using the VID, PID,
     // and optionally the Serial number.
     DeviceHandle = hid_open(MY_VID, MY_PID, NULL);
-
+    qDebug()<<"hid_open : ";
+    qDebug()<<DeviceHandle;
     if(DeviceHandle == NULL)
     {
+        qDebug()<<"not connect null usb";
         USBConnected = 0;
         return -1;
     }

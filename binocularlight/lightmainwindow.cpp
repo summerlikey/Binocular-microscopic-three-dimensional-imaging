@@ -77,6 +77,8 @@
 #include "lightmainwindow.h"
 #include "ui_lightmainwindow.h"
 
+#include <QDebug>
+
 
 FlashDevice g_FlashDevice;
 static int g_FrameIdx=0;
@@ -397,12 +399,14 @@ LightMainWindow::LightMainWindow(QWidget *parent) :
                    << "DEFAULT.PORTCONFIG.FLD_SEL" ;
 
     DLPC350_USB_Init();
+    qDebug()<<DLPC350_USB_IsConnected();
     ui->pushButton_Connect->setEnabled(DLPC350_USB_IsConnected());
 
     m_usbPollTimer = new QTimer(this);
     m_usbPollTimer->setInterval(2000);
     connect(m_usbPollTimer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
     m_usbPollTimer->start();
+    qDebug()<<"chenggong";
 }
 
 LightMainWindow::~LightMainWindow()
@@ -529,7 +533,7 @@ void LightMainWindow::ApplyGUISettingToDLPC350()
 int LightMainWindow::GetDLPC350Status()
 {
     unsigned char HWStatus, SysStatus, MainStatus;
-
+    qDebug()<<"check status";
     if(DLPC350_GetStatus(&HWStatus, &SysStatus, &MainStatus) == 0)
     {
         ui->indicatorButton_statusInitDone->setEnabled((HWStatus & BIT0) == BIT0); //Init Done
@@ -633,8 +637,10 @@ void LightMainWindow::SetDLPC350InPatternMode()
 
 void LightMainWindow::timerTimeout(void)
 {
+
     if(DLPC350_USB_IsConnected())
     {
+        qDebug()<<"isconnected";
         if(ui->checkBox_updateStatus->isChecked())
         {
             if(GetDLPC350Status()!= 0)
@@ -645,8 +651,11 @@ void LightMainWindow::timerTimeout(void)
     }
     else
     {
+        qDebug()<<"notconnected";
+        qDebug()<<DLPC350_USB_Open();
         if(DLPC350_USB_Open()==0)
         {
+            qDebug()<<"is open?";
             ui->pushButton_Connect->setEnabled(DLPC350_USB_IsConnected());
 
             emit on_pushButton_Connect_clicked();

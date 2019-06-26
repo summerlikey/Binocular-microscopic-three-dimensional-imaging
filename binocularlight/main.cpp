@@ -43,8 +43,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //LightMainWindow w;
-    CameraMainWindow w;
+    LightMainWindow w;
+    //CameraMainWindow w;
     w.show();
     
     return a.exec();

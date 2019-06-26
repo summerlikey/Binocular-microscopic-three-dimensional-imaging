@@ -68,12 +68,17 @@ LIBS += -lVimbaC -lVimbaCPP -lVimbaImageTransform
 
 win32:CONFIG(release, debug|release): LIBS += -L../binocularlight/hidapi-master/windows/release/ -lhidapi
 else:win32:CONFIG(debug, debug|release): LIBS += -L../binocularlight/hidapi-master/windows/debug/ -lhidapi
-macx: SOURCES += ../binocularlight/hidapi-master/mac/hid.c
+#macx: SOURCES += ../binocularlight/hidapi-master/mac/hid.c
 unix: !macx: SOURCES += ../binocularlight/hidapi-master/linux/hid.c
 
-macx: LIBS += -framework CoreFoundation -framework IOkit
-win32: LIBS += -lSetupAPI
+#macx: LIBS += -framework CoreFoundation -framework IOkit
+#win32: LIBS += -lSetupAPI
 unix: !macx: LIBS += -lusb-1.0 -ludev
+
+#LIBS      = -L"/usr/lib/x86_64-linux-gnu" -lpthread
+#LIBS += -L"/usr/lib/x86_64-linux-gnu" -lusb-1.0
+#LIBS += -L"/usr/lib/x86_64-linux-gnu" -ludev
+
 
 INCLUDEPATH += ../binocularlight/hidapi-master/hidapi
 DEPENDPATH += ../binocularlight/hidapi-master/hidapi
